@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Simple Radio</string>
+    <string name="CHANNEL_ID">simpleRadioChannel</string>
+    <string-array name="countries">
+        <item>Poland</item>
+        <item>Ukraine</item>
+        <item>United States</item>
+        <item>United Kingdom</item>
+    </string-array>
+    <string-array name="types">
+        <item>POP</item>
+        <item>CLASSIC</item>
+        <item>NEWS</item>
+        <item>ROCK</item>
+        <item>1940s</item>
+        <item>1920s</item>
+        <item>RELIGION</item>
+    </string-array>
+</resources>

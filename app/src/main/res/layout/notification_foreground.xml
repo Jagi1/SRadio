@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="75dp"
+    android:orientation="horizontal"
+    android:background="@color/colorPrimaryDark">
+
+    <ImageView
+        android:id="@+id/station_logo_civ"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="12.5dp"
+        android:layout_marginTop="12.5dp"
+        android:layout_marginBottom="12.5dp"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="300dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="12.5dp"
+        android:layout_marginEnd="75dp"
+        android:elegantTextHeight="true"
+        android:text="TITLE"
+        android:textColor="@color/colorSecondaryAccent"
+        android:textStyle="bold"
+        android:ellipsize="marquee"
+        android:singleLine="true"
+        android:textSize="14sp"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:layout_toEndOf="@id/station_logo_civ"
+        android:layout_alignTop="@id/station_logo_civ"/>
+
+    <TextView
+        android:id="@+id/song"
+        android:layout_width="300dp"
+        android:layout_height="20dp"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
+        android:layout_marginStart="12.5dp"
+        android:layout_marginEnd="75dp"
+        android:elegantTextHeight="true"
+        android:textSize="12sp"
+        android:textColor="@color/colorSecondaryAccent"
+        android:textStyle="italic"
+        android:layout_toEndOf="@id/station_logo_civ"
+        android:layout_alignBottom="@id/station_logo_civ"/>
+
+    <ImageView
+        android:id="@+id/play_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="6dp"
+        android:layout_gravity="center_vertical"
+        android:visibility="gone"
+        android:src="@drawable/ic_play_arrow_24dp" />
+
+    <ImageView
+        android:id="@+id/stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:visibility="gone"
+        android:src="@drawable/ic_stop_24dp" />
+
+
+</RelativeLayout>

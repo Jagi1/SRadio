@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "911363424678",
+    "firebase_url": "https://simple-radio-c9936.firebaseio.com",
+    "project_id": "simple-radio-c9936",
+    "storage_bucket": "simple-radio-c9936.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:911363424678:android:341f345cf3f805de",
+        "android_client_info": {
+          "package_name": "pl.qwisdom.simpleradio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "911363424678-oda1geaga4k8j6o6nu80it7k8sli69c3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDplqiYLwPo7SNvWd5Rw0JqskLIDRRoIPk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

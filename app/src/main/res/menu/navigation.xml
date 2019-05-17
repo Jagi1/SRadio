@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/radio_item"
+        android:title="RADIO"
+        android:icon="@drawable/ic_radio_24dp"/>
+
+    <item
+        android:id="@+id/list_item"
+        android:title="LIST"
+        android:icon="@drawable/ic_view_list_24dp"/>
+
+    <item
+        android:id="@+id/settings_item"
+        android:title="SETTINGS"
+        android:icon="@drawable/ic_settings_24dp"/>
+
+</menu>
