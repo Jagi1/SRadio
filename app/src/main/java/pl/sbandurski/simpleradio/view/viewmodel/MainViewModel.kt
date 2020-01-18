@@ -9,13 +9,10 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.GradientDrawable
-import android.net.Uri
 import android.os.IBinder
-import android.provider.Settings
 import android.support.design.card.MaterialCardView
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.graphics.Palette
-import android.support.v7.widget.CardView
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -27,7 +24,6 @@ import pl.sbandurski.simpleradio.view.listener.ILoadingStationAnimationListener
 import pl.sbandurski.simpleradio.view.listener.TrackChangeListener
 import pl.sbandurski.simpleradio.view.model.Station
 import pl.sbandurski.simpleradio.view.model.Track
-import pl.sbandurski.simpleradio.view.service.FloatingWidgetService
 import pl.sbandurski.simpleradio.view.service.RadioService
 import pl.sbandurski.simpleradio.view.util.ParsingHeaderData
 import pl.sbandurski.simpleradio.view.view.activity.MainActivity
@@ -127,14 +123,6 @@ class MainViewModel : ViewModel() {
             }.addOnFailureListener { ex ->
                 ex.printStackTrace()
             }
-    }
-
-    /**
-     * Creates floating view over other apps.
-     * */
-    fun createBuubleView(activity: MainActivity) {
-        activity.startService(Intent(activity, FloatingWidgetService::class.java))
-        activity.finish()
     }
 
     fun setPalette(bitmap: Bitmap) {

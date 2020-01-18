@@ -287,10 +287,6 @@ class MainActivity :
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-    }
-
     override fun onResume() {
         super.onResume()
         if (prefs.getBoolean("firstrun", true)) {
@@ -309,13 +305,6 @@ class MainActivity :
         if (!viewModel.mRotating && viewModel.mBound) {
             applicationContext.unbindService(viewModel.mConnection)
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == viewModel.DRAW_OVER_OTHER_APP_PERMISSION_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) viewModel.createBuubleView(this@MainActivity)
-            else viewModel.createBuubleView(this@MainActivity)
-        } else super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun createUpdateUIHandler() {
