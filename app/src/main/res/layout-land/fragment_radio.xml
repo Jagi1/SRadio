@@ -21,6 +21,26 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
+    <com.github.ybq.android.spinkit.SpinKitView
+        android:id="@+id/spinningLoadingScreen"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        style="@style/SpinKitView.Pulse"
+        app:SpinKit_Color="@color/colorAccent"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/station_logo_civ_radio"
+        app:layout_constraintEnd_toEndOf="@id/station_logo_civ_radio"
+        app:layout_constraintTop_toTopOf="@id/station_logo_civ_radio"
+        app:layout_constraintBottom_toBottomOf="@id/station_logo_civ_radio"/>
+
+    <ImageButton
+        android:id="@+id/createFloatingView"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_radio_24dp"
+        app:layout_constraintBottom_toBottomOf="@id/station_logo_civ_radio"
+        app:layout_constraintEnd_toEndOf="@id/station_logo_civ_radio"/>
+
     <TextView
         android:id="@+id/station_name"
         android:layout_width="0dp"
