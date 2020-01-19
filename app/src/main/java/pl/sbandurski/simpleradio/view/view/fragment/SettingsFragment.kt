@@ -3,13 +3,13 @@ package pl.sbandurski.simpleradio.view.view.fragment
 import android.app.AlertDialog
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v14.preference.SwitchPreference
-import android.support.v7.preference.Preference
-import android.support.v7.preference.PreferenceFragmentCompat
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_feedback.view.*

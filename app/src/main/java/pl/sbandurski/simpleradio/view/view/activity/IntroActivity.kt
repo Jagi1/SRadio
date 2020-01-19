@@ -1,7 +1,7 @@
 package pl.sbandurski.simpleradio.view.view.activity
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import com.github.paolorotolo.appintro.AppIntro
 import pl.sbandurski.simpleradio.view.view.fragment.introfragment.Page1
 import pl.sbandurski.simpleradio.view.view.fragment.introfragment.Page2

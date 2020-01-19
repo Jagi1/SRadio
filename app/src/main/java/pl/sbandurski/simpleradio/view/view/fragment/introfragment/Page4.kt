@@ -1,10 +1,10 @@
 package pl.sbandurski.simpleradio.view.view.fragment.introfragment
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import pl.sbandurski.simpleradio.R
 
 class Page4: Fragment() {

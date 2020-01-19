@@ -1,16 +1,17 @@
 package pl.sbandurski.simpleradio.view.view.fragment
 
-import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_radio.*
 import pl.sbandurski.simpleradio.R
@@ -38,7 +39,6 @@ class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
         act = activity as MainActivity
         play_pause.setOnClickListener(this)
         stop.setOnClickListener(this)
-        createFloatingView.setOnClickListener(this)
 
         prepareTracks()
 
@@ -64,11 +64,6 @@ class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
         when (v?.id) {
             R.id.play_pause -> playPauseRadio()
             R.id.stop -> stopRadio()
-            R.id.createFloatingView -> activity?.startActivityForResult(
-                Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:${act.packageName}")),
-                act.viewModel.DRAW_OVER_OTHER_APP_PERMISSION_REQUEST_CODE
-            )
         }
     }
 
@@ -88,7 +83,7 @@ class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
      * Prepare RecyclerView with tracks.
      * */
     private fun prepareTracks() {
-        track_list.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
+        track_list.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         act.mAdapter = TrackListAdapter(tracks = act.viewModel.mTracks.value!!, listener = this)
         track_list.adapter = act.mAdapter
     }

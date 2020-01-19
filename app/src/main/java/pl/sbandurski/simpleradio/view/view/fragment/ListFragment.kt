@@ -1,11 +1,7 @@
 package pl.sbandurski.simpleradio.view.view.fragment
 
-import android.arch.lifecycle.Observer
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +9,10 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import android.widget.LinearLayout
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.fragment_list.*
 import pl.sbandurski.simpleradio.R
@@ -54,7 +54,7 @@ class ListFragment : Fragment(), View.OnClickListener {
         filter_btn.setOnClickListener(this)
         name_edit.setOnClickListener(act)
         name_check.setOnClickListener(act)
-        recycler_view.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
+        recycler_view.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         act.viewModel.resources = resources
 //        act.viewModel.fetchStations(this)
         act.viewModel.mStations.observe(this, Observer { stations ->

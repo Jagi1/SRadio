@@ -1,6 +1,6 @@
 package pl.sbandurski.simpleradio.view.util
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import pl.sbandurski.simpleradio.view.model.Station
 
 interface OnItemClickListener {

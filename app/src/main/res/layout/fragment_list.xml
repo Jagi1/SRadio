@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_list_main_cl"
@@ -8,7 +8,7 @@
     android:animateLayoutChanges="true"
     android:background="@android:color/transparent">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="@id/filter_fab"
         app:layout_constraintTop_toBottomOf="@id/filter_card" />
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/filter_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
         app:layout_constraintStart_toStartOf="@id/filter_fab"
         app:layout_constraintTop_toTopOf="@id/filter_fab" />
 
-    <android.support.design.card.MaterialCardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/filter_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
         app:layout_constraintEnd_toEndOf="@id/filter_fab"
         app:layout_constraintStart_toStartOf="parent">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -159,8 +159,8 @@
                 app:layout_constraintHeight_percent="0.25"
                 app:layout_constraintStart_toStartOf="parent" />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </android.support.design.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

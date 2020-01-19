@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="pl.sbandurski.simpleradio">
 
     <!-- Internet stuff -->
@@ -12,9 +11,6 @@
     
     <!-- Vibration -->
     <uses-permission android:name="android.permission.VIBRATE" />
-
-    <!-- Bubble view -->
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     
     <application
         android:name="pl.sbandurski.simpleradio.view.application.App"
@@ -26,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name="pl.sbandurski.simpleradio.view.view.activity.IntroActivity" android:screenOrientation="portrait"/>
-        <activity android:name="pl.sbandurski.simpleradio.view.view.activity.MainActivity">
+        <activity android:name="pl.sbandurski.simpleradio.view.view.activity.MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -35,10 +31,6 @@
         </activity>
 
         <service android:name="pl.sbandurski.simpleradio.view.service.RadioService" />
-
-        <service android:name=".view.service.FloatingWidgetService"
-            android:enabled="true"
-            android:exported="false"/>
         
         <receiver
             android:name="pl.sbandurski.simpleradio.view.service.RadioService$NotificationStopHandler"

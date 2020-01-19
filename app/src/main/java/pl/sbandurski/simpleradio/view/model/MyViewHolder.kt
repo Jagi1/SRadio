@@ -1,10 +1,10 @@
 package pl.sbandurski.simpleradio.view.model
 
-import android.support.design.card.MaterialCardView
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.list_item.view.*
 import pl.sbandurski.simpleradio.view.util.OnItemClickListener
 

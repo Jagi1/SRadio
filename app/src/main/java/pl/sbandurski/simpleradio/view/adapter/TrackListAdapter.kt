@@ -1,11 +1,11 @@
 package pl.sbandurski.simpleradio.view.adapter
 
-import android.support.design.card.MaterialCardView
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.track_item.view.*
 import pl.sbandurski.simpleradio.R
 import pl.sbandurski.simpleradio.view.listener.TrackClickedListener

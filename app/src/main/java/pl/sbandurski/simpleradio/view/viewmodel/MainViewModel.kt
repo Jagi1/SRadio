@@ -1,7 +1,5 @@
 package pl.sbandurski.simpleradio.view.viewmodel
 
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
@@ -10,13 +8,15 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.GradientDrawable
 import android.os.IBinder
-import android.support.design.card.MaterialCardView
-import android.support.design.widget.FloatingActionButton
-import android.support.v7.graphics.Palette
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.palette.graphics.Palette
 import com.github.ybq.android.spinkit.SpinKitView
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_list.*
 import pl.sbandurski.simpleradio.R

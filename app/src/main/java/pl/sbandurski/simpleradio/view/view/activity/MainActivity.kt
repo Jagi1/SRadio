@@ -1,16 +1,15 @@
 package pl.sbandurski.simpleradio.view.view.activity
 
-import android.arch.lifecycle.ViewModelProviders
 import android.content.*
 import android.os.*
-import android.support.constraint.ConstraintSet
-import android.support.v7.app.AppCompatActivity
-import android.support.design.widget.BottomNavigationView
-import android.support.v4.view.ViewPager
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_list.*
 import kotlinx.android.synthetic.main.fragment_radio.*
@@ -67,7 +66,7 @@ class MainActivity :
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
-        viewModel.getGradientDrawable().observe(this, android.arch.lifecycle.Observer { gradient ->
+        viewModel.getGradientDrawable().observe(this, androidx.lifecycle.Observer { gradient ->
             with(main_layout) {
                 setBackgroundDrawable(gradient)
             }

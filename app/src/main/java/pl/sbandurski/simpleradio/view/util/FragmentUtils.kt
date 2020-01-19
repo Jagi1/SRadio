@@ -5,10 +5,10 @@ import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.support.annotation.Nullable
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.Nullable
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import pl.sbandurski.simpleradio.R
 
 fun openFragment(fragment: Fragment, @Nullable sfm: FragmentManager) {

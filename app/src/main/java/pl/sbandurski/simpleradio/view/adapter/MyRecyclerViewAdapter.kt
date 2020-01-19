@@ -1,8 +1,8 @@
 package pl.sbandurski.simpleradio.view.adapter
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import pl.sbandurski.simpleradio.R
 import pl.sbandurski.simpleradio.view.model.MyViewHolder
 import pl.sbandurski.simpleradio.view.model.Station
