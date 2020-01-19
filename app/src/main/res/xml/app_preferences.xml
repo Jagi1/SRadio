@@ -2,12 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreference
-        android:icon="@drawable/ic_swap_horiz_24dp"
-        android:key="orientation"
-        android:summary=""
-        android:title="Prevent orientation change" />
-
-    <SwitchPreference
         android:icon="@drawable/ic_access_time_24dp"
         android:key="time"
         android:title="Set 12 - Hour Clock"/>

@@ -46,7 +46,6 @@ class SettingsFragment: PreferenceFragmentCompat() {
         orientation = findPreference("orientation") as SwitchPreference
         time = findPreference("time") as SwitchPreference
         prepareTime()
-        prepareOrientation()
         prepareFeedback()
     }
 
@@ -59,22 +58,6 @@ class SettingsFragment: PreferenceFragmentCompat() {
             })
         } catch (e: UninitializedPropertyAccessException) {
             Log.d("TIME_EXCEPTION", e.message)
-        }
-    }
-
-    private fun prepareOrientation() {
-        if (orientation.isChecked) {
-            act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        } else {
-            act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
-        }
-        orientation.setOnPreferenceClickListener { preference ->
-            if (orientation.isChecked) {
-                act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            } else {
-                act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
-            }
-            true
         }
     }
 
