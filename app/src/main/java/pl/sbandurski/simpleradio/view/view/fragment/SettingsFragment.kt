@@ -38,6 +38,12 @@ class SettingsFragment: PreferenceFragmentCompat() {
         database = FirebaseFirestore.getInstance()
         createFeedbackDialog()
         initPreferences()
+        act.viewModel.mLightVibrant.observe(this, androidx.lifecycle.Observer {
+            it?.let { nonNullColor->
+                time.icon.setTint(nonNullColor)
+                feedback.icon.setTint(nonNullColor)
+            }
+        })
     }
 
     private fun initPreferences() {

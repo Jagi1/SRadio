@@ -11,6 +11,7 @@ import android.os.IBinder
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.palette.graphics.Palette
@@ -33,14 +34,12 @@ import pl.sbandurski.simpleradio.view.view.fragment.ListFragment
 class MainViewModel : ViewModel() {
 
     var mGradientDrawable: MutableLiveData<GradientDrawable> = MutableLiveData()
+    var mLightVibrant : MutableLiveData<Int?> = MutableLiveData()
     var mPalette: MutableLiveData<Palette> = MutableLiveData()
     var mTracks: MutableLiveData<ArrayList<Track>> =
         MutableLiveData<ArrayList<Track>>().default(ArrayList<Track>())
     var mCurrentStation: MutableLiveData<Station> = MutableLiveData()
     var mCurrentTrackData: MutableLiveData<ParsingHeaderData.TrackData> = MutableLiveData()
-    var mStations: MutableLiveData<ArrayList<Station>> = MutableLiveData()
-    var mCountries : Array<String?>? = null
-    var mGenres : Array<String?>? = null
     var m12Hour: Boolean = false
     var mBound: Boolean = false
     var mRotating: Boolean = false
@@ -51,16 +50,24 @@ class MainViewModel : ViewModel() {
     var resources: Resources? = null
     var mOrientation: Int? = null
 
+    // Database data
+    var mStations: MutableLiveData<ArrayList<Station>> = MutableLiveData()
+    var mAllStations : MutableLiveData<ArrayList<Station>> = MutableLiveData()
+    var mCountries : Array<String?>? = null
+    var mGenres : Array<String?>? = null
+
+    // Constraint animation
+    var mNativeConstraintSet : ConstraintSet = ConstraintSet()
+    var mIsHistoryShowed = false
+
     val mConnection = object : ServiceConnection {
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            Log.d("IKSDE", "onServiceDisconnected($name)")
             mBound = false
             mService = null
         }
 
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            Log.d("IKSDE", "onServiceConnected($name, $service)")
             val binder = service as RadioService.LocalBinder
             mService = binder.getService()
             mService!!.setTrackListener(trackListener!!)
@@ -104,7 +111,57 @@ class MainViewModel : ViewModel() {
             }
     }
 
-    fun fetchStations(filter : SearchFilter) {
+    fun filterStations(filter : SearchFilter) {
+        val list = ArrayList<Station>()
+        var stations = mAllStations.value
+        if (stations != null) {
+            for (station in stations) {
+                if (filter.name?.isNotEmpty() == true) {
+                    if (!station.getName().toLowerCase().contains(
+                            filter.name,
+                            true
+                        )
+                    ) {
+                        continue
+                    }
+                }
+                if (filter.country?.isNotEmpty() == true) {
+                    if (!station.getCountry().toLowerCase().contains(
+                            filter.country,
+                            true
+                        )
+                    ) {
+                        continue
+                    }
+                }
+                if (filter.genre?.isNotEmpty() == true) {
+                    if (!station.getType().toLowerCase().contains(
+                            filter.genre,
+                            true
+                        )
+                    ) {
+                        continue
+                    }
+                }
+                val id = station.getDrawableID()
+                list.add(
+                    Station(
+                        name = station.getName(),
+                        image = BitmapFactory.decodeResource(resources, R.drawable.item_logo),
+                        url = station.getUrl(),
+                        drawableID = id,
+                        type = station.getType(),
+                        bitrate = station.getBitrate(),
+                        logoUrl = id,
+                        country = station.getCountry()
+                    )
+                )
+            }
+        }
+        mStations.value = list
+    }
+
+    fun fetchAllStations(filter : SearchFilter) {
         val list = ArrayList<Station>()
         val database = FirebaseFirestore.getInstance()
         database.collection("stations")
@@ -147,11 +204,12 @@ class MainViewModel : ViewModel() {
                             drawableID = id,
                             type = station.data["type"] as String,
                             bitrate = station.data["bitrate"] as String,
-                            logoUrl = station.id
+                            logoUrl = station.id,
+                            country = station.data["country"] as String
                         )
                     )
                 }
-                mStations.value = list
+                mAllStations.value = list
             }.addOnFailureListener { ex ->
                 ex.printStackTrace()
             }
@@ -168,14 +226,23 @@ class MainViewModel : ViewModel() {
         val darkMuted = mPalette.value?.darkMutedSwatch?.rgb
         val muted = mPalette.value?.mutedSwatch?.rgb
         val lightMuted = mPalette.value?.lightMutedSwatch?.rgb
+        val dominantSwatch = mPalette.value?.dominantSwatch?.rgb
+        val vibrantSwatch = mPalette.value?.vibrantSwatch?.rgb
+        val lightVibrantSwatch = mPalette.value?.lightVibrantSwatch?.rgb
         var color: Int?
         color = when {
             darkVibrant != null -> darkVibrant
             darkMuted != null -> darkMuted
             muted != null -> muted
             lightMuted != null -> lightMuted
+            dominantSwatch != null -> dominantSwatch
+            vibrantSwatch != null -> vibrantSwatch
+            lightVibrantSwatch != null -> lightVibrantSwatch
             else -> 0x00000000
         }
+
+        mLightVibrant.value = lightVibrantSwatch
+
         mGradientDrawable.value = GradientDrawable(
             GradientDrawable.Orientation.TOP_BOTTOM,
             listOf(color, 0xFF131313.toInt()).toIntArray()
@@ -198,16 +265,6 @@ class MainViewModel : ViewModel() {
      * */
     fun showLoadingAnimation(animation: SpinKitView?) {
         animation?.visibility = View.VISIBLE
-    }
-
-    fun hideFilterCard(card: MaterialCardView?, image: ImageView?) {
-        card?.visibility = View.GONE
-        image?.visibility = View.GONE
-    }
-
-    fun showFilterCard(card: MaterialCardView?, image: ImageView?) {
-        card?.visibility = View.VISIBLE
-        image?.visibility = View.VISIBLE
     }
 
     fun changeFilterAlpha(image: ImageView?, floatingButton: FloatingActionButton?, newState: Int) {

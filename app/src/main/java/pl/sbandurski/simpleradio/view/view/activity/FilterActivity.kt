@@ -15,6 +15,7 @@ class FilterActivity : AppCompatActivity() {
 
     var mCountries : Array<String>? = null
     var mGenres : Array<String>? = null
+    var mLightVibrant : Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +24,11 @@ class FilterActivity : AppCompatActivity() {
         val extras = intent
         mCountries = extras.getStringArrayExtra("countries")
         mGenres = extras.getStringArrayExtra("genres")
+        mLightVibrant = extras.getIntExtra("color", 0)
+
+        if (mLightVibrant != 0) {
+            filter_button.setBackgroundColor(mLightVibrant)
+        }
 
         setCountryAutoComplete(this)
         setGenreAutoComplete(this)

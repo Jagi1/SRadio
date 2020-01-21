@@ -12,8 +12,8 @@ android {
         applicationId "pl.sbandurski.simpleradio"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 230010201
-        versionName "1.2.1"
+        versionCode 230010207
+        versionName "1.2.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -48,6 +48,7 @@ dependencies {
     implementation 'com.github.AppIntro:AppIntro:v4.2.3'
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.github.IslamKhSh:CardSlider:0.4'
     testImplementation 'junit:junit:4.12'
 
     // Loading animation

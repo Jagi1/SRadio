@@ -2,99 +2,138 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/fragment_radio_root"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/transparent"
     android:animateLayoutChanges="true">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/station_logo_civ_radio"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fragment_radio_cv"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:src="@drawable/web_hi_res_512"
-        app:civ_border_color="@color/colorAccent"
-        app:civ_border_width="2dp"
-        app:layout_constrainedHeight="true"
-        app:layout_constraintStart_toStartOf="@id/play_pause"
-        app:layout_constraintEnd_toEndOf="@id/stop"
+        android:layout_height="wrap_content"
+        android:elevation="12dp"
+        app:layout_constraintWidth_percent=".9"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/play_pause"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/fragment_radio_cv2">
 
-    <com.github.ybq.android.spinkit.SpinKitView
-        android:id="@+id/spinningLoadingScreen"
+        <ImageView
+            android:id="@+id/station_logo_civ_radio"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/web_hi_res_512" />
+
+        <com.github.ybq.android.spinkit.SpinKitView
+            android:id="@+id/spinningLoadingScreen"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            style="@style/SpinKitView.Pulse"
+            app:SpinKit_Color="@color/colorAccent"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@id/station_logo_civ_radio"
+            app:layout_constraintEnd_toEndOf="@id/station_logo_civ_radio"
+            app:layout_constraintTop_toTopOf="@id/station_logo_civ_radio"
+            app:layout_constraintBottom_toBottomOf="@id/station_logo_civ_radio"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fragment_radio_cv2"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        style="@style/SpinKitView.Pulse"
-        app:SpinKit_Color="@color/colorAccent"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@id/station_logo_civ_radio"
-        app:layout_constraintEnd_toEndOf="@id/station_logo_civ_radio"
-        app:layout_constraintTop_toTopOf="@id/station_logo_civ_radio"
-        app:layout_constraintBottom_toBottomOf="@id/station_logo_civ_radio"/>
-
-    <TextView
-        android:id="@+id/station_name"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:elegantTextHeight="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/track_artist"/>
+        app:layout_constrainedWidth="true"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="@id/fragment_radio_cv"
+        app:layout_constraintEnd_toEndOf="@id/fragment_radio_cv"
+        app:layout_constraintBottom_toTopOf="@id/history">
 
-    <TextView
-        android:id="@+id/track_artist"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:elegantTextHeight="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/track_title"/>
+        <TextView
+            android:id="@+id/station_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textColor="@color/common_google_signin_btn_text_dark_default"
+            android:elegantTextHeight="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/track_artist"/>
 
-    <TextView
-        android:id="@+id/track_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:elegantTextHeight="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/play_pause"/>
+        <TextView
+            android:id="@+id/track_artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textColor="@color/common_google_signin_btn_text_dark_default"
+            android:elegantTextHeight="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/station_name"
+            app:layout_constraintBottom_toTopOf="@id/track_title"/>
+
+        <TextView
+            android:id="@+id/track_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textColor="@color/common_google_signin_btn_text_dark_default"
+            android:elegantTextHeight="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/track_artist"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageButton
         android:id="@+id/play_pause"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent=".1"
         android:soundEffectsEnabled="true"
         android:outlineSpotShadowColor="@color/colorSecondaryAccent"
         android:outlineAmbientShadowColor="@color/colorSecondaryAccent"
         android:src="@drawable/ic_play_arrow_24dp"
         android:backgroundTint="@android:color/transparent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/fragment_radio_cv"
+        app:layout_constraintBottom_toTopOf="@id/fragment_radio_slider_container"/>
+
+    <ImageButton
+        android:id="@+id/history"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent=".1"
+        android:soundEffectsEnabled="true"
+        android:outlineSpotShadowColor="@color/colorSecondaryAccent"
+        android:outlineAmbientShadowColor="@color/colorSecondaryAccent"
+        android:src="@drawable/ic_history"
+        android:backgroundTint="@android:color/transparent"
+        app:layout_constraintStart_toEndOf="@id/play_pause"
         app:layout_constraintEnd_toStartOf="@id/stop"
-        app:layout_constraintBottom_toTopOf="@id/list_card"/>
+        app:layout_constraintBottom_toTopOf="@id/fragment_radio_slider_container"/>
 
     <ImageButton
         android:id="@+id/stop"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent=".1"
         android:src="@drawable/ic_stop_24dp"
         android:backgroundTint="@android:color/transparent"
-        app:layout_constraintStart_toEndOf="@id/play_pause"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/list_card"/>
+        app:layout_constraintEnd_toEndOf="@id/fragment_radio_cv"
+        app:layout_constraintBottom_toTopOf="@id/fragment_radio_slider_container"/>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/list_card"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="0dp"
         android:backgroundTint="@android:color/transparent"
         app:layout_constrainedHeight="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -104,5 +143,40 @@
             android:layout_height="match_parent"/>
 
     </com.google.android.material.card.MaterialCardView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fragment_radio_slider_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/transparent"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/fragment_radio_slider_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New stations"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <com.github.islamkhsh.CardSliderViewPager
+            android:id="@+id/fragment_radio_slider_vp"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            app:cardSlider_cardCornerRadius="0dp"
+            app:cardSlider_cardBackgroundColor="@android:color/transparent"
+            app:cardSlider_pageMargin="12dp"
+            app:cardSlider_smallScaleFactor="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:auto_slide_time="5"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

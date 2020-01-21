@@ -10,7 +10,8 @@ import pl.sbandurski.simpleradio.view.util.OnItemClickListener
 
 class MyRecyclerViewAdapter(
     private val list: ArrayList<Station>,
-    private val listener: OnItemClickListener
+    private val listener: OnItemClickListener,
+    private val color : Int?
 ) : RecyclerView.Adapter<MyViewHolder>() {
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): MyViewHolder {
@@ -26,6 +27,7 @@ class MyRecyclerViewAdapter(
         p0.setViews(
             station = list[p1]
         )
+        p0.setColor(color)
         p0.bind(list[p1], listener)
     }
 }

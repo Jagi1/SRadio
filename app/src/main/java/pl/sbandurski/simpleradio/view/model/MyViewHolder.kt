@@ -1,5 +1,6 @@
 package pl.sbandurski.simpleradio.view.model
 
+import android.content.res.ColorStateList
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -29,6 +30,19 @@ data class MyViewHolder(
     fun bind(station: Station, listener: OnItemClickListener) {
         card.setOnClickListener {
             listener.onItemClick(station)
+        }
+    }
+
+    fun setColor(color : Int?) {
+        color?.let { nonNullColor ->
+            val states = arrayOf(
+                intArrayOf(android.R.attr.state_enabled), // enabled
+                intArrayOf(-android.R.attr.state_enabled), // disabled
+                intArrayOf(-android.R.attr.state_checked), // unchecked
+                intArrayOf(android.R.attr.state_pressed)  // pressed
+            )
+            val colors = intArrayOf(nonNullColor, nonNullColor, nonNullColor, nonNullColor)
+            card.backgroundTintList = ColorStateList(states, colors)
         }
     }
 

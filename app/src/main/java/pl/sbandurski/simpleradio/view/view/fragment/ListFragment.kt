@@ -1,6 +1,7 @@
 package pl.sbandurski.simpleradio.view.view.fragment
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
@@ -55,13 +56,25 @@ class ListFragment : Fragment(), View.OnClickListener {
             }
         })
         act = activity as MainActivity
+        act.viewModel.mLightVibrant.observe(this, Observer {
+            it?.let { nonNullColor ->
+                val states = arrayOf(
+                    intArrayOf(android.R.attr.state_enabled), // enabled
+                    intArrayOf(-android.R.attr.state_enabled), // disabled
+                    intArrayOf(-android.R.attr.state_checked), // unchecked
+                    intArrayOf(android.R.attr.state_pressed)  // pressed
+                )
+                val colors = intArrayOf(nonNullColor, nonNullColor, nonNullColor, nonNullColor)
+                filter_fab.backgroundTintList = ColorStateList(states, colors)
+            }
+        })
         filter_fab.setOnClickListener(this)
         recycler_view.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         act.viewModel.resources = resources
 //        act.viewModel.fetchStations(this)
         act.viewModel.mStations.observe(this, Observer { stations ->
             recycler_view.scheduleLayoutAnimation()
-            mAdapter = MyRecyclerViewAdapter(stations!!, act)
+            mAdapter = MyRecyclerViewAdapter(stations!!, act, act.viewModel.mLightVibrant.value)
             recycler_view.adapter = mAdapter
             if (stations.isEmpty()) {
                 Snackbar.make(act.navigation_view, "No stations found..", Snackbar.LENGTH_LONG)
@@ -69,7 +82,6 @@ class ListFragment : Fragment(), View.OnClickListener {
                     .show()
             } else {
                 val storage = FirebaseStorage.getInstance()
-                var i = 0
                 stations.forEach { station ->
                     storage.reference.child("/stations/${station.getLogoUrl()}/${station.getLogoUrl()}.bmp")
                         .getBytes(1024 * 1024).addOnSuccessListener { bytes ->
@@ -87,7 +99,7 @@ class ListFragment : Fragment(), View.OnClickListener {
                 when (resultCode) {
                     Codes.SEARCH_OK -> {
                         val filter = data?.getParcelableExtra("filter") as SearchFilter
-                        act.viewModel.fetchStations(filter)
+                        act.viewModel.filterStations(filter)
                     }
                     Codes.SEARCH_CANCEL -> {}
                 }
@@ -102,6 +114,7 @@ class ListFragment : Fragment(), View.OnClickListener {
                 val filterStations = Intent(context, FilterActivity::class.java)
                 filterStations.putExtra("countries", act.viewModel.mCountries)
                 filterStations.putExtra("genres", act.viewModel.mGenres)
+                filterStations.putExtra("color", act.viewModel.mLightVibrant.value)
                 startActivityForResult(filterStations, FILTER_REQUEST_CODE)
             }
         }

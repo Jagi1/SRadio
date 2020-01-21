@@ -61,11 +61,15 @@ class MainActivity :
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
+        viewModel.fetchAllStations(SearchFilter("", "", ""))
+
         viewModel.getGradientDrawable().observe(this, androidx.lifecycle.Observer { gradient ->
-            with(main_layout) {
+            main_layout.apply {
                 setBackgroundDrawable(gradient)
             }
         })
+
+        navigation_view
 
         viewModel.mOrientation = resources.configuration.orientation
 
