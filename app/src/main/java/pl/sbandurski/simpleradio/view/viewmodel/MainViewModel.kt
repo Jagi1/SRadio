@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.fragment_list.*
 import pl.sbandurski.simpleradio.R
 import pl.sbandurski.simpleradio.view.listener.ILoadingStationAnimationListener
 import pl.sbandurski.simpleradio.view.listener.TrackChangeListener
+import pl.sbandurski.simpleradio.view.model.SearchFilter
 import pl.sbandurski.simpleradio.view.model.Station
 import pl.sbandurski.simpleradio.view.model.Track
 import pl.sbandurski.simpleradio.view.service.RadioService
@@ -31,18 +32,15 @@ import pl.sbandurski.simpleradio.view.view.fragment.ListFragment
 
 class MainViewModel : ViewModel() {
 
-    val DRAW_OVER_OTHER_APP_PERMISSION_REQUEST_CODE = 1222
-
     var mGradientDrawable: MutableLiveData<GradientDrawable> = MutableLiveData()
     var mPalette: MutableLiveData<Palette> = MutableLiveData()
     var mTracks: MutableLiveData<ArrayList<Track>> =
         MutableLiveData<ArrayList<Track>>().default(ArrayList<Track>())
     var mCurrentStation: MutableLiveData<Station> = MutableLiveData()
     var mCurrentTrackData: MutableLiveData<ParsingHeaderData.TrackData> = MutableLiveData()
-    var mStations: MutableLiveData<ArrayList<Station>> =
-        MutableLiveData<ArrayList<Station>>().default(
-            ArrayList<Station>()
-        )
+    var mStations: MutableLiveData<ArrayList<Station>> = MutableLiveData()
+    var mCountries : Array<String?>? = null
+    var mGenres : Array<String?>? = null
     var m12Hour: Boolean = false
     var mBound: Boolean = false
     var mRotating: Boolean = false
@@ -72,34 +70,68 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun fetchStations(fragment: ListFragment) {
+    fun fetchGenres() {
+        val list = ArrayList<String>()
+        val database = FirebaseFirestore.getInstance()
+        database.collection("genres")
+            .get()
+            .addOnSuccessListener { genres ->
+                for (genre in genres) {
+                    list.add(genre.data["name"].toString())
+                }
+                mGenres = arrayOfNulls(list.size)
+                list.toArray(mGenres)
+            }
+            .addOnFailureListener {
+                it.printStackTrace()
+            }
+    }
+
+    fun fetchCountries() {
+        val list = ArrayList<String>()
+        val database = FirebaseFirestore.getInstance()
+        database.collection("countries")
+            .get()
+            .addOnSuccessListener { countries ->
+                for (country in countries) {
+                    list.add(country.data["name"].toString())
+                }
+                mCountries = arrayOfNulls(list.size)
+                list.toArray(mCountries)
+            }
+            .addOnFailureListener {
+                it.printStackTrace()
+            }
+    }
+
+    fun fetchStations(filter : SearchFilter) {
         val list = ArrayList<Station>()
         val database = FirebaseFirestore.getInstance()
         database.collection("stations")
             .get()
             .addOnSuccessListener { stations ->
                 for (station in stations) {
-                    if (fragment.name_check.isChecked) {
+                    if (filter.name?.isNotEmpty() == true) {
                         if (!station.data["name"].toString().toLowerCase().contains(
-                                fragment.name_edit.text.toString(),
+                                filter.name,
                                 true
                             )
                         ) {
                             continue
                         }
                     }
-                    if (fragment.country_check.isChecked) {
+                    if (filter.country?.isNotEmpty() == true) {
                         if (!station.data["country"].toString().toLowerCase().contains(
-                                fragment.countries.selectedItem.toString(),
+                                filter.country,
                                 true
                             )
                         ) {
                             continue
                         }
                     }
-                    if (fragment.type_check.isChecked) {
+                    if (filter.genre?.isNotEmpty() == true) {
                         if (!station.data["type"].toString().toLowerCase().contains(
-                                fragment.types.selectedItem.toString(),
+                                filter.genre,
                                 true
                             )
                         ) {
@@ -178,13 +210,13 @@ class MainViewModel : ViewModel() {
         image?.visibility = View.VISIBLE
     }
 
-    fun changeFilterAlpha(card: MaterialCardView?, image: ImageView?, floatingButton: FloatingActionButton?, newState: Int) {
+    fun changeFilterAlpha(image: ImageView?, floatingButton: FloatingActionButton?, newState: Int) {
         if (newState != 2) {
-            when (card?.alpha) {
+            when (floatingButton?.alpha) {
                 1.0f -> 0.4f
                 else -> 1.0f
             }.apply {
-                card?.alpha = this
+                floatingButton?.alpha = this
                 image?.alpha = this
                 floatingButton?.alpha = this
             }

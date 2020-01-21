@@ -6,6 +6,7 @@
         <item>Ukraine</item>
         <item>United States</item>
         <item>United Kingdom</item>
+        <item>Russia</item>
     </string-array>
     <string-array name="types">
         <item>POP</item>

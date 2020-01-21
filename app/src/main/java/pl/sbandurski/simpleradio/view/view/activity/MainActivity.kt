@@ -19,6 +19,7 @@ import pl.sbandurski.simpleradio.view.adapter.ViewPagerAdapter
 import pl.sbandurski.simpleradio.view.listener.ILoadingStationAnimationListener
 import pl.sbandurski.simpleradio.view.listener.TrackChangeListener
 import pl.sbandurski.simpleradio.view.listener.TrackClickedListener
+import pl.sbandurski.simpleradio.view.model.SearchFilter
 import pl.sbandurski.simpleradio.view.view.fragment.ListFragment
 import pl.sbandurski.simpleradio.view.view.fragment.RadioFragment
 import pl.sbandurski.simpleradio.view.view.fragment.SettingsFragment
@@ -33,7 +34,6 @@ class MainActivity :
     AppCompatActivity(),
     BottomNavigationView.OnNavigationItemSelectedListener,
     ViewPager.OnPageChangeListener,
-    View.OnClickListener,
     OnItemClickListener,
     TrackChangeListener,
     TrackClickedListener,
@@ -54,15 +54,10 @@ class MainActivity :
 
         prefs = getSharedPreferences("SimpleRadioPrefs", Context.MODE_PRIVATE)
 
-
-        // Launch intro activity if it's first run of app.
-//        val intro = Intent(this, IntroActivity::class.java)
-//        startActivity(intro)
         if (prefs.getBoolean("firstrun", true)) {
             val intro = Intent(this, IntroActivity::class.java)
             startActivity(intro)
         }
-
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
@@ -90,32 +85,9 @@ class MainActivity :
             message.what = MESSAGE_UPDATE_TRACKS
             updateUIHandler?.sendMessage(message)
         }
-    }
 
-    /**
-     * It is used not only for this activity but also for fragments.
-     * */
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.name_check -> {
-                name_edit.isEnabled = when (name_check.isChecked) {
-                    true -> true
-                    else -> false
-                }
-            }
-            R.id.country_check -> {
-                countries.isEnabled = when (country_check.isChecked) {
-                    true -> true
-                    else -> false
-                }
-            }
-            R.id.type_check -> {
-                types.isEnabled = when (type_check.isChecked) {
-                    true -> true
-                    else -> false
-                }
-            }
-        }
+        viewModel.fetchCountries()
+        viewModel.fetchGenres()
     }
 
     private fun prepareViewPager() {
@@ -138,9 +110,6 @@ class MainActivity :
         viewModel.mCurrentStation.value = station
         track_title.text = ""
         track_artist.text = ""
-        if (filter_card.visibility == View.VISIBLE) {
-            filter_fab.callOnClick()
-        }
         viewModel.setPalette(station.getImage()!!)
         viewModel.setGradientDrawable()
         play_pause.setImageDrawable(getDrawable(R.drawable.ic_pause_24dp))

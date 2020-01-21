@@ -23,7 +23,6 @@ class SettingsFragment: PreferenceFragmentCompat() {
     private lateinit var act: MainActivity
     private lateinit var builder: AlertDialog.Builder
     private lateinit var dialog: AlertDialog
-    private lateinit var orientation: SwitchPreference
     private lateinit var time: SwitchPreference
     private lateinit var feedback: Preference
     private lateinit var dialogView: View
@@ -43,7 +42,6 @@ class SettingsFragment: PreferenceFragmentCompat() {
 
     private fun initPreferences() {
         feedback = findPreference("feedback")
-        orientation = findPreference("orientation") as SwitchPreference
         time = findPreference("time") as SwitchPreference
         prepareTime()
         prepareFeedback()
@@ -85,9 +83,13 @@ class SettingsFragment: PreferenceFragmentCompat() {
             feedback["text"] = dialogView.text_feedback.text.toString()
             database.collection("feedback").document("$year.$month.$day $hour:$minute").set(feedback)
                 .addOnSuccessListener {
-                    Snackbar.make(act.navigation_view, "Feedback sent", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(act.navigation_view, "Feedback sent", Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(resources.getColor(R.color.colorLightBlue))
+                        .show()
                 }.addOnFailureListener {
-                    Snackbar.make(act.navigation_view, "Feedback have not been sent", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(act.navigation_view, "Feedback have not been sent", Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(resources.getColor(R.color.colorLightBlue))
+                        .show()
                 }.addOnCompleteListener {
                     dialog.dismiss()
                 }

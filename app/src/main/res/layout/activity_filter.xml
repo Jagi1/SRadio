@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:fitsSystemWindows="true"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    tools:context=".view.view.activity.FilterActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/search_label_contener"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent=".06"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/search_label"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constrainedWidth="true"
+            app:layout_constrainedHeight="true"
+            android:text="STATION FILTER"
+            android:padding="8dp"
+            android:textSize="22sp"
+            android:textColor="@color/colorWhite"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/search_close"/>
+
+        <ImageView
+            android:id="@+id/search_close"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constrainedWidth="true"
+            android:padding="4dp"
+            android:src="@drawable/ic_close_24dp"
+            android:scaleType="centerInside"
+            app:layout_constraintTop_toTopOf="@id/search_label"
+            app:layout_constraintBottom_toBottomOf="@id/search_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintDimensionRatio="1.1"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/cardview_dark_background"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/search_name_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent=".1"
+        app:layout_constraintTop_toBottomOf="@id/search_label_contener"
+        android:hint="Station name"
+        style="@style/OutlinedTextBox">
+
+        <AutoCompleteTextView
+            android:id="@+id/search_name_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/OutlinedTextContent"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/search_country_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent=".1"
+        android:hint="Country"
+        app:layout_constraintTop_toBottomOf="@id/search_name_container"
+        style="@style/OutlinedTextBox">
+
+        <AutoCompleteTextView
+            android:id="@+id/search_country_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/OutlinedTextContent"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/search_genere_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent=".1"
+        android:hint="Genere"
+        app:layout_constraintTop_toBottomOf="@id/search_country_container"
+        style="@style/OutlinedTextBox">
+
+        <AutoCompleteTextView
+            android:id="@+id/search_genere_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/OutlinedTextContent"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/filter_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="FILTER"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

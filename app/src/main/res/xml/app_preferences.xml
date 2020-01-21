@@ -9,7 +9,7 @@
     <Preference
         android:icon="@drawable/ic_feedback_24dp"
         android:key="feedback"
-        android:summary="Report technical issues or suggest new features."
+        android:summary="Report technical issues and suggest new stations"
         android:title="Feedback" />
 
 </PreferenceScreen>
