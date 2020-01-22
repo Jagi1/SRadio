@@ -1,6 +1,7 @@
 package pl.sbandurski.simpleradio.view.view.activity
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ArrayAdapter
@@ -27,7 +28,20 @@ class FilterActivity : AppCompatActivity() {
         mLightVibrant = extras.getIntExtra("color", 0)
 
         if (mLightVibrant != 0) {
+            val states = arrayOf(
+                intArrayOf(android.R.attr.state_enabled), // enabled
+                intArrayOf(-android.R.attr.state_enabled), // disabled
+                intArrayOf(-android.R.attr.state_checked), // unchecked
+                intArrayOf(android.R.attr.state_pressed)  // pressed
+            )
+            val colors = intArrayOf(mLightVibrant, mLightVibrant, mLightVibrant, mLightVibrant)
             filter_button.setBackgroundColor(mLightVibrant)
+            search_name_container.hintTextColor = ColorStateList(states, colors)
+            search_country_container.hintTextColor = ColorStateList(states, colors)
+            search_genere_container.hintTextColor = ColorStateList(states, colors)
+            search_name_container.defaultHintTextColor = ColorStateList(states, colors)
+            search_country_container.defaultHintTextColor = ColorStateList(states, colors)
+            search_genere_container.defaultHintTextColor = ColorStateList(states, colors)
         }
 
         setCountryAutoComplete(this)

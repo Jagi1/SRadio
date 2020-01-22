@@ -20,6 +20,7 @@ class App: Application() {
                 "Simple radio channel",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
+            channel.vibrationPattern = longArrayOf( 0 )
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
         }

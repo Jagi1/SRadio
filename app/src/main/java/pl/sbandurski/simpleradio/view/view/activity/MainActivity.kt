@@ -1,6 +1,7 @@
 package pl.sbandurski.simpleradio.view.view.activity
 
 import android.content.*
+import android.content.res.ColorStateList
 import android.os.*
 import android.util.Log
 import android.view.MenuItem
@@ -69,7 +70,16 @@ class MainActivity :
             }
         })
 
-        navigation_view
+        val color = resources.getColor(R.color.colorAccent)
+        val states = arrayOf(
+            intArrayOf(android.R.attr.state_enabled), // enabled
+            intArrayOf(-android.R.attr.state_enabled), // disabled
+            intArrayOf(-android.R.attr.state_checked), // unchecked
+            intArrayOf(android.R.attr.state_pressed)  // pressed
+        )
+        val colors = intArrayOf(color, color, color, color)
+        navigation_view.itemIconTintList = ColorStateList(states, colors)
+        navigation_view.itemTextColor = ColorStateList(states, colors)
 
         viewModel.mOrientation = resources.configuration.orientation
 
