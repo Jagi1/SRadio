@@ -88,7 +88,7 @@ class MainActivity :
         viewModel.animationListener = this
 
         if (viewModel.mBound) {
-            viewModel.mService!!.mPlayer.start()
+//            viewModel.mService!!.mPlayer.start()
         }
 
         createUpdateUIHandler()
@@ -239,12 +239,12 @@ class MainActivity :
         vibrate(this, 20)
         if (viewModel.mService != null) {
             if (viewModel.mService!!.mPrepared) {
-                if (viewModel.mService!!.mPlayer.isPlaying) {
+                if (viewModel.mService!!.mPlayer.playWhenReady) {
                     play_pause.setImageDrawable(getDrawable(R.drawable.ic_play_arrow_24dp))
                 } else play_pause.setImageDrawable(getDrawable(R.drawable.ic_pause_24dp))
-                when (viewModel.mService!!.mPlayer.isPlaying) {
-                    true -> viewModel.mService!!.mPlayer.pause()
-                    else -> viewModel.mService!!.mPlayer.start()
+                when (viewModel.mService!!.mPlayer.playWhenReady) {
+                    true -> viewModel.mService!!.mPlayer.playWhenReady = false
+                    else -> viewModel.mService!!.mPlayer.playWhenReady = true
                 }
             }
         }

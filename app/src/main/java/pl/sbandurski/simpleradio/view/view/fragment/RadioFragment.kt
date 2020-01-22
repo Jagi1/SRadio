@@ -127,12 +127,12 @@ class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
         vibrate(act, 20)
         if (act.viewModel.mService != null) {
             if (act.viewModel.mService!!.mPrepared) {
-                if (act.viewModel.mService!!.mPlayer.isPlaying) {
+                if (act.viewModel.mService!!.mPlayer.playWhenReady) {
                     play_pause.setImageDrawable(act.getDrawable(R.drawable.ic_play_arrow_24dp))
                 } else play_pause.setImageDrawable(act.getDrawable(R.drawable.ic_pause_24dp))
-                when (act.viewModel.mService!!.mPlayer.isPlaying) {
-                    true -> act.viewModel.mService!!.mPlayer.pause()
-                    else -> act.viewModel.mService!!.mPlayer.start()
+                when (act.viewModel.mService!!.mPlayer.playWhenReady) {
+                    true -> act.viewModel.mService!!.mPlayer.playWhenReady = false
+                    else -> act.viewModel.mService!!.mPlayer.playWhenReady = true
                 }
             }
         }
@@ -148,7 +148,7 @@ class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
             track_artist.text = ""
             if (act.viewModel.mService!!.mPrepared) {
                 act.pager.currentItem = 1
-                if (act.viewModel.mService!!.mPlayer.isPlaying) {
+                if (act.viewModel.mService!!.mPlayer.playWhenReady) {
                     play_pause.setImageDrawable(act.getDrawable(R.drawable.ic_play_arrow_24dp))
                     act.viewModel.mService!!.mPlayer.stop()
                 }

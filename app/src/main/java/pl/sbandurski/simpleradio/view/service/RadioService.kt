@@ -8,14 +8,20 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
+import android.net.Uri
 import android.net.wifi.WifiManager
-import android.os.AsyncTask
-import android.os.Binder
-import android.os.IBinder
-import android.os.PowerManager
+import android.os.*
 import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
+import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.extractor.ExtractorsFactory
+import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor
+import com.google.android.exoplayer2.source.ExtractorMediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import pl.sbandurski.simpleradio.R
 import pl.sbandurski.simpleradio.view.listener.ILoadingStationAnimationListener
 import pl.sbandurski.simpleradio.view.listener.TrackChangeListener
@@ -25,7 +31,7 @@ import pl.sbandurski.simpleradio.view.view.activity.MainActivity
 import java.net.URL
 import java.util.*
 
-class RadioService: Service(), MediaPlayer.OnPreparedListener {
+class RadioService: Service() {
 
     private lateinit var mNotificationLayout: RemoteViews
     private lateinit var mPendingIntent: PendingIntent
@@ -42,20 +48,43 @@ class RadioService: Service(), MediaPlayer.OnPreparedListener {
     private val iBinder = LocalBinder()
     private var mUrl: String? = null
     var mStarted = false
-    lateinit var mPlayer: MediaPlayer
+    lateinit var mPlayer: ExoPlayer
     var mPrepared = false
+
+    val handler = Handler()
 
     override fun onBind(intent: Intent?): IBinder? {
         val name = intent?.getStringExtra("NAME")
         mUrl = intent?.getStringExtra("URL")
         val id = intent?.getStringExtra("DRAWABLE_ID")
+        val userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:40.0) Gecko/20100101 Firefox/40.0"
 
-        mPlayer = MediaPlayer().apply {
-            setOnPreparedListener(this@RadioService)
-            setDataSource(mUrl)
-            prepareAsync()
-            setWakeMode(applicationContext, PowerManager.PARTIAL_WAKE_LOCK)
-        }
+        val dataSourceFactory = DefaultHttpDataSourceFactory(
+            userAgent, null,
+            DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+            DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
+            true
+        )
+
+        val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+            .createMediaSource(Uri.parse(mUrl))
+        mPlayer = SimpleExoPlayer.Builder(this).build()
+        mPlayer.prepare(mediaSource)
+        mPlayer.playWhenReady = false
+        mPlayer.addListener(object : Player.EventListener {
+            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                if (playWhenReady) {
+                    mPrepared = true
+                    mStarted = true
+                    mNotificationLayout.setImageViewBitmap(R.id.station_logo_civ, mStation.getImage())
+                    mNotification = createNotification()
+                    mLoadingStationAnimationListener.onLoadingStationAnimationChange()
+                    startForeground(1, mNotification)
+                }
+                super.onPlayerStateChanged(playWhenReady, playbackState)
+            }
+        })
+
         mWifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         mWifiLock = mWifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "myLock")
         mWifiLock.acquire()
@@ -77,16 +106,6 @@ class RadioService: Service(), MediaPlayer.OnPreparedListener {
         mTimer.schedule(mTask, 0, 2000)
 
         return iBinder
-    }
-
-    override fun onPrepared(mp: MediaPlayer?) {
-        mPlayer.start()
-        mPrepared = true
-        mStarted = true
-        mNotificationLayout.setImageViewBitmap(R.id.station_logo_civ, mStation.getImage())
-        mNotification = createNotification()
-        mLoadingStationAnimationListener.onLoadingStationAnimationChange()
-        startForeground(1, mNotification)
     }
 
     private fun createNotification(): Notification =
@@ -141,17 +160,21 @@ class RadioService: Service(), MediaPlayer.OnPreparedListener {
             val tD = streaming.getTrackDetails(url)
             if (mTrackData == null) {
                 if (tD.toString() != " - ") {
-                    mTrackListener.onTrackChange(tD)
-                    mTrackData = tD
-                    updateNotification()
+                    if (this@RadioService::mTrackListener.isInitialized) {
+                        mTrackListener.onTrackChange(tD)
+                        mTrackData = tD
+                        updateNotification()
+                    }
                 }
                 return
             }
             if (!checkMeta(tD)) {
                 if (tD.toString() != " - ") {
-                    mTrackListener.onTrackChange(tD)
-                    mTrackData = tD
-                    updateNotification()
+                    if (this@RadioService::mTrackListener.isInitialized) {
+                        mTrackListener.onTrackChange(tD)
+                        mTrackData = tD
+                        updateNotification()
+                    }
                 }
             }
         }

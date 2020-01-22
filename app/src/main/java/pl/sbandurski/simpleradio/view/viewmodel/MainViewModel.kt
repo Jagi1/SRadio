@@ -74,6 +74,7 @@ class MainViewModel : ViewModel() {
             mService!!.setLoadingAnimationListener(animationListener!!)
             mBound = true
             mService!!.setStation(mCurrentStation.value!!)
+            mService!!.mPlayer.playWhenReady = true
         }
     }
 
