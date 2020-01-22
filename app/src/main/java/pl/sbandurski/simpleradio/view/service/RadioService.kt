@@ -73,7 +73,7 @@ class RadioService: Service() {
         mPlayer.playWhenReady = false
         mPlayer.addListener(object : Player.EventListener {
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                if (playWhenReady) {
+                if (playWhenReady && playbackState == Player.STATE_READY) {
                     mPrepared = true
                     mStarted = true
                     mNotificationLayout.setImageViewBitmap(R.id.station_logo_civ, mStation.getImage())
@@ -82,6 +82,11 @@ class RadioService: Service() {
                     startForeground(1, mNotification)
                 }
                 super.onPlayerStateChanged(playWhenReady, playbackState)
+            }
+
+            override fun onPlayerError(error: ExoPlaybackException) {
+                Log.d("EXOPLAYER_DEBUG", "message: ${error.message}")
+                super.onPlayerError(error)
             }
         })
 
