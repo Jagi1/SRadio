@@ -154,7 +154,8 @@ class MainViewModel : ViewModel() {
                         type = station.getType(),
                         bitrate = station.getBitrate(),
                         logoUrl = id,
-                        country = station.getCountry()
+                        country = station.getCountry(),
+                        new = station.getNew()
                     )
                 )
             }
@@ -206,7 +207,8 @@ class MainViewModel : ViewModel() {
                             type = station.data["type"] as String,
                             bitrate = station.data["bitrate"] as String,
                             logoUrl = station.id,
-                            country = station.data["country"] as String
+                            country = station.data["country"] as String,
+                            new = station.data["new"] as Boolean
                         )
                     )
                 }

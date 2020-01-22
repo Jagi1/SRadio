@@ -238,7 +238,7 @@ class MainActivity :
     private fun playPauseRadio() {
         vibrate(this, 20)
         if (viewModel.mService != null) {
-            if (viewModel.mService!!.mPrepared) {
+            if (viewModel.mService!!.mPlayer.playWhenReady) {
                 if (viewModel.mService!!.mPlayer.playWhenReady) {
                     play_pause.setImageDrawable(getDrawable(R.drawable.ic_play_arrow_24dp))
                 } else play_pause.setImageDrawable(getDrawable(R.drawable.ic_pause_24dp))

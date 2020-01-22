@@ -19,7 +19,9 @@ import com.google.android.exoplayer2.extractor.ExtractorsFactory
 import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
@@ -50,22 +52,15 @@ class RadioService: Service() {
     var mTrackData: ParsingHeaderData.TrackData? = null
     private val iBinder = LocalBinder()
     private var mUrl: String? = null
-    var mStarted = false
     lateinit var mPlayer: ExoPlayer
-    var mPrepared = false
-
-    val handler = Handler()
 
     override fun onBind(intent: Intent?): IBinder? {
         val name = intent?.getStringExtra("NAME")
         mUrl = intent?.getStringExtra("URL")
-        val id = intent?.getStringExtra("DRAWABLE_ID")
         initializePlayer()
         mPlayer.addListener(object : Player.EventListener {
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                 if (playWhenReady && playbackState == Player.STATE_READY) {
-                    mPrepared = true
-                    mStarted = true
                     mNotificationLayout.setImageViewBitmap(R.id.station_logo_civ, mStation.getImage())
                     mNotification = createNotification()
                     mLoadingStationAnimationListener.onLoadingStationAnimationChange()
@@ -131,11 +126,10 @@ class RadioService: Service() {
             }
 
     override fun onUnbind(intent: Intent?): Boolean {
-        if (mPrepared)
+        if (mPlayer.playWhenReady)
             mPlayer.release()
         mTimer.cancel()
         mTimer.purge()
-        mPrepared = false
         mWifiLock.release()
         return super.onUnbind(intent)
     }
@@ -147,7 +141,7 @@ class RadioService: Service() {
     inner class NotificationStopHandler: BroadcastReceiver() {
 
         override fun onReceive(context: Context?, intent: Intent?) {
-            if (mPrepared) {
+            if (mPlayer.playWhenReady) {
                 Log.d("NOTIFICATION", "Stop clicked.")
                 mPlayer.release()
                 onDestroy()

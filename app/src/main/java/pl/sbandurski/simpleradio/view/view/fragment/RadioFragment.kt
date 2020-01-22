@@ -89,7 +89,7 @@ class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
         })
 
         if (act.viewModel.mService != null) {
-            if (act.viewModel.mService!!.mStarted) play_pause.setImageDrawable(act.getDrawable(R.drawable.ic_pause_24dp))
+            if (act.viewModel.mService!!.mPlayer.playWhenReady) play_pause.setImageDrawable(act.getDrawable(R.drawable.ic_pause_24dp))
             else play_pause.setImageDrawable(act.getDrawable(R.drawable.ic_play_arrow_24dp))
         }
     }
@@ -126,7 +126,7 @@ class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
     private fun playPauseRadio() {
         vibrate(act, 20)
         if (act.viewModel.mService != null) {
-            if (act.viewModel.mService!!.mPrepared) {
+            if (act.viewModel.mService!!.mPlayer.playWhenReady) {
                 if (act.viewModel.mService!!.mPlayer.playWhenReady) {
                     play_pause.setImageDrawable(act.getDrawable(R.drawable.ic_play_arrow_24dp))
                 } else play_pause.setImageDrawable(act.getDrawable(R.drawable.ic_pause_24dp))
@@ -146,7 +146,7 @@ class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
             station_name.text = ""
             track_title.text = ""
             track_artist.text = ""
-            if (act.viewModel.mService!!.mPrepared) {
+            if (act.viewModel.mService!!.mPlayer.playWhenReady) {
                 act.pager.currentItem = 1
                 if (act.viewModel.mService!!.mPlayer.playWhenReady) {
                     play_pause.setImageDrawable(act.getDrawable(R.drawable.ic_play_arrow_24dp))
@@ -181,10 +181,12 @@ class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
 
     private fun setSlider() {
         act.viewModel.mAllStations.observe(this, Observer {
-            val adapter = SliderAdapter(this, it)
-            adapter.initializeImages()
-            fragment_radio_slider_vp.baseShadow = 0f
-            fragment_radio_slider_vp.minShadow = 0f
+            ArrayList(it.filter { it.getNew() }).let { newStations ->
+                val adapter = SliderAdapter(this, newStations)
+                adapter.initializeImages()
+                fragment_radio_slider_vp.baseShadow = 0f
+                fragment_radio_slider_vp.minShadow = 0f
+            }
         })
     }
 }

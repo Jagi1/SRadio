@@ -10,7 +10,8 @@ data class Station(
     private val bitrate : String,
     private val drawableID : String,
     private val logoUrl : String,
-    private val country : String
+    private val country : String,
+    private val new : Boolean
 ) {
 
     fun getName(): String = name
@@ -32,4 +33,6 @@ data class Station(
     fun getLogoUrl() : String = logoUrl
 
     fun getCountry() : String = country
+
+    fun getNew() : Boolean = new
 }
