@@ -20,9 +20,12 @@ import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
+import com.google.android.exoplayer2.util.Util
 import pl.sbandurski.simpleradio.R
+import pl.sbandurski.simpleradio.view.application.App
 import pl.sbandurski.simpleradio.view.listener.ILoadingStationAnimationListener
 import pl.sbandurski.simpleradio.view.listener.TrackChangeListener
 import pl.sbandurski.simpleradio.view.model.Station
@@ -57,20 +60,7 @@ class RadioService: Service() {
         val name = intent?.getStringExtra("NAME")
         mUrl = intent?.getStringExtra("URL")
         val id = intent?.getStringExtra("DRAWABLE_ID")
-        val userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:40.0) Gecko/20100101 Firefox/40.0"
-
-        val dataSourceFactory = DefaultHttpDataSourceFactory(
-            userAgent, null,
-            DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
-            DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
-            true
-        )
-
-        val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-            .createMediaSource(Uri.parse(mUrl))
-        mPlayer = SimpleExoPlayer.Builder(this).build()
-        mPlayer.prepare(mediaSource)
-        mPlayer.playWhenReady = false
+        initializePlayer()
         mPlayer.addListener(object : Player.EventListener {
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                 if (playWhenReady && playbackState == Player.STATE_READY) {
@@ -111,6 +101,22 @@ class RadioService: Service() {
         mTimer.schedule(mTask, 0, 2000)
 
         return iBinder
+    }
+
+    private fun initializePlayer() {
+        val userAgent = Util.getUserAgent(applicationContext, "Simple Radio")
+        val dataSourceFactory = DefaultHttpDataSourceFactory(
+            userAgent, null,
+            DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+            DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
+            true
+        )
+
+        val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+            .createMediaSource(Uri.parse(mUrl))
+        mPlayer = SimpleExoPlayer.Builder(this).build()
+        mPlayer.prepare(mediaSource)
+        mPlayer.playWhenReady = false
     }
 
     private fun createNotification(): Notification =
