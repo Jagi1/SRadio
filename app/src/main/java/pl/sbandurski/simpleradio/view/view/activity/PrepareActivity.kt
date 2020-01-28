@@ -1,11 +1,17 @@
 package pl.sbandurski.simpleradio.view.view.activity
 
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import androidx.core.animation.doOnEnd
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.activity_prepare.*
 import pl.sbandurski.simpleradio.R
 import pl.sbandurski.simpleradio.view.model.SearchFilter
 import pl.sbandurski.simpleradio.view.model.Station
@@ -85,8 +91,19 @@ class PrepareActivity : AppCompatActivity() {
     }
 
     private fun saveStationsToCache(list : ArrayList<Station>) {
-        StationsCache.stations = list
-        startMainActivity()
+        ValueAnimator.ofFloat(1f, 0f).apply {
+            duration = 500
+            interpolator = LinearOutSlowInInterpolator()
+            addUpdateListener {
+                prepare_animation.alpha = it.animatedValue as Float
+            }
+            doOnEnd {
+                prepare_animation.visibility = View.GONE
+                StationsCache.stations = list
+                startMainActivity()
+            }
+            start()
+        }
     }
 
     private fun startMainActivity() {

@@ -17,9 +17,6 @@ import androidx.palette.graphics.Palette
 import com.github.ybq.android.spinkit.SpinKitView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import pl.sbandurski.simpleradio.R
 import pl.sbandurski.simpleradio.view.listener.ILoadingStationAnimationListener
 import pl.sbandurski.simpleradio.view.listener.TrackChangeListener
@@ -112,10 +109,6 @@ class MainViewModel : ViewModel() {
     }
 
     fun filterStations(filter : SearchFilter) {
-        val metrics = resources!!.displayMetrics
-        val width = (metrics.widthPixels * 0.9).toInt()
-        val height = (metrics.heightPixels * 0.52).toInt()
-
         val list = ArrayList<Station>()
         var stations = mAllStations.value
         if (stations != null) {
@@ -149,11 +142,10 @@ class MainViewModel : ViewModel() {
                 }
                 val id = station.getDrawableID()
                 val image = BitmapFactory.decodeResource(resources, R.drawable.item_logo)
-                val resizedImage = Bitmap.createScaledBitmap(image, width, width, true)
                 list.add(
                     Station(
                         name = station.getName(),
-                        image = resizedImage,
+                        image = image,
                         url = station.getUrl(),
                         drawableID = id,
                         type = station.getType(),

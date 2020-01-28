@@ -85,14 +85,8 @@ class ListFragment : Fragment(), View.OnClickListener {
                 stations.forEach { station ->
                     storage.reference.child("/stations/${station.getLogoUrl()}/${station.getLogoUrl()}.bmp")
                         .getBytes(1024 * 1024).addOnSuccessListener { bytes ->
-                            val metrics = act.resources.displayMetrics
-                            // Percent width
-                            val width = (metrics.widthPixels * 0.9).toInt()
-                            // Percent height
-                            val height = (metrics.heightPixels * 0.52).toInt()
                             val image = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                            val resizedImage = Bitmap.createScaledBitmap(image, width, width, true)
-                            station.setImage(resizedImage)
+                            station.setImage(image)
                             mAdapter.notifyDataSetChanged()
                         }
                 }

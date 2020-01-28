@@ -6,8 +6,24 @@
     android:layout_height="match_parent"
     tools:context=".view.view.activity.PrepareActivity">
 
-    <ImageView
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/prepare_margin_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".85"/>
+
+    <com.github.ybq.android.spinkit.SpinKitView
+        android:id="@+id/prepare_animation"
         android:layout_width="0dp"
-        android:layout_height="0dp"/>
+        android:layout_height="0dp"
+        style="@style/SpinKitView.Large.Wave"
+        android:visibility="visible"
+        app:SpinKit_Color="@color/colorPrimary"
+        app:layout_constraintWidth_percent=".2"
+        app:layout_constraintDimensionRatio="1,1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/prepare_margin_bottom"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

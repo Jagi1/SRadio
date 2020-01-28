@@ -2,6 +2,7 @@ package pl.sbandurski.simpleradio.view.view.fragment
 
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -89,7 +90,12 @@ class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
 
         // Update current station data
         act.viewModel.mCurrentStation.observe(this, Observer { station ->
-            station_logo_civ_radio.setImageBitmap(station?.getImage())
+            station?.getImage()?.let {
+                val metrics = resources.displayMetrics
+                val width = (metrics.widthPixels * 0.9).toInt()
+                val resizedImage = Bitmap.createScaledBitmap(it, width, width, true)
+                station_logo_civ_radio.setImageBitmap(resizedImage)
+            }
         })
 
         if (act.viewModel.mService != null) {
