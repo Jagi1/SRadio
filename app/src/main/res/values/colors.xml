@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#C73E1D</color>
+    <color name="colorPrimary">#fafafa</color>
     <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#C73E1D</color>
-    <color name="colorSecondaryAccent">#F28D00</color>
+    <color name="colorAccent">#fafafa</color>
+    <color name="colorSecondaryAccent">#fafafa</color>
     <color name="colorBackground">#121212</color>
     <color name="colorWhite">#fafafa</color>
-    <color name="colorLightBlue">#29b6f6</color>
+    <color name="colorLightBlue">#fafafa</color>
 </resources>

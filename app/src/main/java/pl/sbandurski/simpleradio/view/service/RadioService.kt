@@ -7,36 +7,23 @@ import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.media.MediaPlayer
-import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.*
 import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.extractor.ExtractorsFactory
-import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor
-import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.source.TrackGroupArray
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
-import com.google.android.exoplayer2.util.Util
 import pl.sbandurski.simpleradio.R
-import pl.sbandurski.simpleradio.view.application.App
 import pl.sbandurski.simpleradio.view.listener.ILoadingStationAnimationListener
 import pl.sbandurski.simpleradio.view.listener.TrackChangeListener
+import pl.sbandurski.simpleradio.view.model.GradientPalette
 import pl.sbandurski.simpleradio.view.model.Station
-import pl.sbandurski.simpleradio.view.util.ParsingHeaderData
+import pl.sbandurski.simpleradio.view.util.*
 import pl.sbandurski.simpleradio.view.view.activity.MainActivity
 import java.net.URL
 import java.util.*
 
-class RadioService: Service() {
+class RadioService: Service(), Player.EventListener {
 
     private lateinit var mNotificationLayout: RemoteViews
     private lateinit var mPendingIntent: PendingIntent
@@ -48,6 +35,7 @@ class RadioService: Service() {
     private lateinit var mStation: Station
     private lateinit var mWifiManager: WifiManager
     private lateinit var mWifiLock: WifiManager.WifiLock
+    private var mGradientPalette : GradientPalette? = null
     private val PACKAGE = "pl.qwisdom.simpleradio"
     var mTrackData: ParsingHeaderData.TrackData? = null
     private val iBinder = LocalBinder()
@@ -55,75 +43,88 @@ class RadioService: Service() {
     lateinit var mPlayer: ExoPlayer
 
     override fun onBind(intent: Intent?): IBinder? {
-        val name = intent?.getStringExtra("NAME")
         mUrl = intent?.getStringExtra("URL")
+        mGradientPalette = intent?.getParcelableExtra("PALETTE")
         initializePlayer()
-        mPlayer.addListener(object : Player.EventListener {
-            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                if (playWhenReady && playbackState == Player.STATE_READY) {
-                    mNotificationLayout.setImageViewBitmap(R.id.station_logo_civ, mStation.getImage())
-                    mNotification = createNotification()
-                    mLoadingStationAnimationListener.onLoadingStationAnimationChange()
-                    startForeground(1, mNotification)
-                }
-                super.onPlayerStateChanged(playWhenReady, playbackState)
-            }
+        initializeWiFi()
+        initializePendingIntent()
+        val name = intent?.getStringExtra("NAME")
+        initializeNotificationLayout(name)
+        initializeSongInfoTask()
+        initializeSongInfoTimer()
+        return iBinder
+    }
 
-            override fun onPlayerError(error: ExoPlaybackException) {
-                Log.d("EXOPLAYER_DEBUG", "message: ${error.message}")
-                super.onPlayerError(error)
-            }
-        })
+    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+        if (playWhenReady && playbackState == Player.STATE_READY) {
+            mNotificationLayout.setImageViewBitmap(R.id.station_logo_civ, mStation.getImage())
+            mNotification = createNotification()
+            mLoadingStationAnimationListener.onLoadingStationAnimationChange()
+            startForeground(1, mNotification)
+        }
+        super.onPlayerStateChanged(playWhenReady, playbackState)
+    }
 
+    private fun initializePlayer() {
+        val userAgent = getUserAgent(applicationContext)
+        val dataSourceFactory = getDefaultHttpDataSourceFactory(userAgent)
+        val mediaSource = getProgressiveMediaSource(mUrl, dataSourceFactory)
+        mPlayer = buildSimpleExoPlayer(this)
+        mPlayer.apply {
+            prepare(mediaSource)
+            addListener(this@RadioService)
+            playWhenReady = false
+        }
+    }
+    private fun initializeSongInfoTask() {
+        mTask = MyTimerTask()
+    }
+    private fun initializeSongInfoTimer() {
+        mTimer = Timer()
+        mTimer.schedule(mTask, 0, 2000)
+    }
+    private fun initializeWiFi() {
         mWifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         mWifiLock = mWifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "myLock")
         mWifiLock.acquire()
-
-
-
-        val notificationIntent = Intent(this, MainActivity::class.java)
-//        mPendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
+    }
+    private fun initializeNotificationLayout(stationName : String?) {
+        mNotificationLayout = RemoteViews(packageName, R.layout.notification_foreground)
+        mNotificationLayout.setTextViewText(R.id.title, stationName)
+        val color = mGradientPalette?.let { palette ->
+            when {
+                palette.lightVibrantSwatch != null -> palette.lightVibrantSwatch
+                palette.lightMuted != null -> palette.lightMuted
+                palette.vibrantSwatch != null -> palette.vibrantSwatch
+                palette.dominantSwatch != null -> palette.dominantSwatch
+                else -> 0x000000
+            }
+        } ?: 0x000000
+        mNotificationLayout.setTextColor(R.id.title, color)
+        mNotificationLayout.setTextColor(R.id.song, color)
+        mNotificationLayout.setTextColor(R.id.app_name, color)
+    }
+    private fun initializePendingIntent() {
         val resultIntent = Intent(this, MainActivity::class.java)
         resultIntent.action = Intent.ACTION_MAIN
         resultIntent.addCategory(Intent.CATEGORY_LAUNCHER)
         mPendingIntent = PendingIntent.getActivity(applicationContext, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        mNotificationLayout = RemoteViews(packageName, R.layout.notification_foreground)
-        mNotificationLayout.setTextViewText(R.id.title, name)
-
-        mTask = MyTimerTask()
-        mTimer = Timer()
-        mTimer.schedule(mTask, 0, 2000)
-
-        return iBinder
     }
 
-    private fun initializePlayer() {
-        val userAgent = Util.getUserAgent(applicationContext, "Simple Radio")
-        val dataSourceFactory = DefaultHttpDataSourceFactory(
-            userAgent, null,
-            DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
-            DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
-            true
-        )
-
-        val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-            .createMediaSource(Uri.parse(mUrl))
-        mPlayer = SimpleExoPlayer.Builder(this).build()
-        mPlayer.prepare(mediaSource)
-        mPlayer.playWhenReady = false
+    private fun createNotification(): Notification {
+        val channelId = resources.getString(R.string.CHANNEL_ID)
+        val builder = NotificationCompat.Builder(this, channelId)
+        builder.apply {
+            setSmallIcon(R.drawable.ic_stat_radio)
+            setContentIntent(mPendingIntent)
+            setContent(mNotificationLayout)
+            setVisibility(Notification.VISIBILITY_PUBLIC)
+            priority = Notification.PRIORITY_MAX
+        }
+        val notification = builder.build()
+        notification.flags = Notification.FLAG_FOREGROUND_SERVICE and Notification.FLAG_ONGOING_EVENT
+        return notification
     }
-
-    private fun createNotification(): Notification =
-        NotificationCompat.Builder(this, resources.getString(R.string.CHANNEL_ID))
-            .setSmallIcon(R.drawable.ic_stat_radio)
-            .setContentIntent(mPendingIntent)
-            .setContent(mNotificationLayout)
-            .setVisibility(Notification.VISIBILITY_PUBLIC)
-            .setPriority(Notification.PRIORITY_MAX)
-            .build().also {
-                it.flags = Notification.FLAG_FOREGROUND_SERVICE and Notification.FLAG_ONGOING_EVENT
-            }
 
     override fun onUnbind(intent: Intent?): Boolean {
         if (mPlayer.playWhenReady)
@@ -142,7 +143,6 @@ class RadioService: Service() {
 
         override fun onReceive(context: Context?, intent: Intent?) {
             if (mPlayer.playWhenReady) {
-                Log.d("NOTIFICATION", "Stop clicked.")
                 mPlayer.release()
                 onDestroy()
             }
@@ -163,6 +163,7 @@ class RadioService: Service() {
             val url = URL(mUrl)
             val streaming = ParsingHeaderData()
             val tD = streaming.getTrackDetails(url)
+            Log.d("TRACK_DATA", tD.toString())
             if (mTrackData == null) {
                 if (tD.toString() != " - ") {
                     if (this@RadioService::mTrackListener.isInitialized) {

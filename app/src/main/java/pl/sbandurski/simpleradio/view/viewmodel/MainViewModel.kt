@@ -1,14 +1,13 @@
 package pl.sbandurski.simpleradio.view.viewmodel
 
 import android.content.ComponentName
-import android.content.Intent
 import android.content.ServiceConnection
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.GradientDrawable
+import android.os.Handler
 import android.os.IBinder
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintSet
@@ -16,25 +15,28 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.palette.graphics.Palette
 import com.github.ybq.android.spinkit.SpinKitView
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.fragment_list.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import pl.sbandurski.simpleradio.R
 import pl.sbandurski.simpleradio.view.listener.ILoadingStationAnimationListener
 import pl.sbandurski.simpleradio.view.listener.TrackChangeListener
+import pl.sbandurski.simpleradio.view.model.GradientPalette
 import pl.sbandurski.simpleradio.view.model.SearchFilter
 import pl.sbandurski.simpleradio.view.model.Station
 import pl.sbandurski.simpleradio.view.model.Track
 import pl.sbandurski.simpleradio.view.service.RadioService
 import pl.sbandurski.simpleradio.view.util.ParsingHeaderData
-import pl.sbandurski.simpleradio.view.view.activity.MainActivity
-import pl.sbandurski.simpleradio.view.view.fragment.ListFragment
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.concurrent.schedule
 
 class MainViewModel : ViewModel() {
 
     var mGradientDrawable: MutableLiveData<GradientDrawable> = MutableLiveData()
-    var mLightVibrant : MutableLiveData<Int?> = MutableLiveData()
+    var mGradientPalette : MutableLiveData<GradientPalette> = MutableLiveData()
     var mPalette: MutableLiveData<Palette> = MutableLiveData()
     var mTracks: MutableLiveData<ArrayList<Track>> =
         MutableLiveData<ArrayList<Track>>().default(ArrayList<Track>())
@@ -55,10 +57,7 @@ class MainViewModel : ViewModel() {
     var mAllStations : MutableLiveData<ArrayList<Station>> = MutableLiveData()
     var mCountries : Array<String?>? = null
     var mGenres : Array<String?>? = null
-
-    // Constraint animation
-    var mNativeConstraintSet : ConstraintSet = ConstraintSet()
-    var mIsHistoryShowed = false
+    var firstOpen = true
 
     val mConnection = object : ServiceConnection {
 
@@ -113,6 +112,10 @@ class MainViewModel : ViewModel() {
     }
 
     fun filterStations(filter : SearchFilter) {
+        val metrics = resources!!.displayMetrics
+        val width = (metrics.widthPixels * 0.9).toInt()
+        val height = (metrics.heightPixels * 0.52).toInt()
+
         val list = ArrayList<Station>()
         var stations = mAllStations.value
         if (stations != null) {
@@ -145,10 +148,12 @@ class MainViewModel : ViewModel() {
                     }
                 }
                 val id = station.getDrawableID()
+                val image = BitmapFactory.decodeResource(resources, R.drawable.item_logo)
+                val resizedImage = Bitmap.createScaledBitmap(image, width, width, true)
                 list.add(
                     Station(
                         name = station.getName(),
-                        image = BitmapFactory.decodeResource(resources, R.drawable.item_logo),
+                        image = resizedImage,
                         url = station.getUrl(),
                         drawableID = id,
                         type = station.getType(),
@@ -163,59 +168,21 @@ class MainViewModel : ViewModel() {
         mStations.value = list
     }
 
-    fun fetchAllStations(filter : SearchFilter) {
-        val list = ArrayList<Station>()
-        val database = FirebaseFirestore.getInstance()
-        database.collection("stations")
-            .get()
-            .addOnSuccessListener { stations ->
-                for (station in stations) {
-                    if (filter.name?.isNotEmpty() == true) {
-                        if (!station.data["name"].toString().toLowerCase().contains(
-                                filter.name,
-                                true
-                            )
-                        ) {
-                            continue
-                        }
-                    }
-                    if (filter.country?.isNotEmpty() == true) {
-                        if (!station.data["country"].toString().toLowerCase().contains(
-                                filter.country,
-                                true
-                            )
-                        ) {
-                            continue
-                        }
-                    }
-                    if (filter.genre?.isNotEmpty() == true) {
-                        if (!station.data["type"].toString().toLowerCase().contains(
-                                filter.genre,
-                                true
-                            )
-                        ) {
-                            continue
-                        }
-                    }
-                    val id = station.id
-                    list.add(
-                        Station(
-                            name = station.data["name"] as String,
-                            image = BitmapFactory.decodeResource(resources, R.drawable.item_logo),
-                            url = station.data["url"] as String,
-                            drawableID = id,
-                            type = station.data["type"] as String,
-                            bitrate = station.data["bitrate"] as String,
-                            logoUrl = station.id,
-                            country = station.data["country"] as String,
-                            new = station.data["new"] as Boolean
-                        )
-                    )
-                }
-                mAllStations.value = list
-            }.addOnFailureListener { ex ->
-                ex.printStackTrace()
+    fun setAllStations(stations : ArrayList<Station>) {
+        mAllStations.value = stations
+    }
+
+    fun showStationsIfFirstOpen() {
+        if (firstOpen) {
+            firstOpen = false
+            val handler = Handler()
+            val runnable = Runnable {
+                val filter = SearchFilter("", "", "")
+                filterStations(filter)
+
             }
+            handler.postDelayed(runnable, 500)
+        }
     }
 
     fun setPalette(bitmap: Bitmap) {
@@ -241,15 +208,23 @@ class MainViewModel : ViewModel() {
             dominantSwatch != null -> dominantSwatch
             vibrantSwatch != null -> vibrantSwatch
             lightVibrantSwatch != null -> lightVibrantSwatch
-            else -> 0x00000000
+            else -> 0xFFfafafa.toInt()
         }
 
-        mLightVibrant.value = lightVibrantSwatch
+        val gradientPalette = GradientPalette(darkVibrant, darkMuted, muted, lightMuted, dominantSwatch, vibrantSwatch, lightVibrantSwatch)
+        mGradientPalette.value = gradientPalette
 
         mGradientDrawable.value = GradientDrawable(
             GradientDrawable.Orientation.TOP_BOTTOM,
             listOf(color, 0xFF131313.toInt()).toIntArray()
         )
+    }
+
+    fun setDefaultGradientPalette() {
+        val palette = GradientPalette(
+            0xFFfafafa.toInt(), 0xFFfafafa.toInt(), 0xFFfafafa.toInt(), 0xFFfafafa.toInt(), 0xFFfafafa.toInt(), 0xFFfafafa.toInt(), 0xFFfafafa.toInt()
+        )
+        mGradientPalette.value = palette
     }
 
     fun <T : Any?> MutableLiveData<T>.default(initialValue: T) = apply { value = initialValue }

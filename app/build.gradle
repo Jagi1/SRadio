@@ -57,6 +57,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.github.IslamKhSh:CardSlider:0.4'
     implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3'
     testImplementation 'junit:junit:4.12'
 
     // Loading animation

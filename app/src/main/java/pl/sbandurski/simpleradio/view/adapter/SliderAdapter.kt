@@ -14,8 +14,13 @@ import pl.sbandurski.simpleradio.view.view.fragment.RadioFragment
 class SliderAdapter(val context : RadioFragment, val stations : ArrayList<Station>) : CardSliderAdapter<Station>(stations) {
 
     override fun bindView(position: Int, itemContentView: View, item: Station?) {
-        itemContentView.slider_item_content.setImageBitmap(item?.getImage())
-        itemContentView.slider_item_name.text = item?.getName()
+        itemContentView.apply {
+            slider_item_content.setImageBitmap(item?.getImage())
+            slider_item_name.text = item?.getName()
+            slider_item_country.text = item?.getCountry()
+            slider_item_genre.text = item?.getType()
+            slider_item_bitrate.text = item?.getBitrate()
+        }
         itemContentView.slider_item_content.setOnClickListener {
             item?.let {
                 (context.activity as MainActivity).onItemClick(item)

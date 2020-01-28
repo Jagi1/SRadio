@@ -2,13 +2,12 @@ package pl.sbandurski.simpleradio.view.view.fragment
 
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.PorterDuff
 import android.os.Bundle
-import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -23,6 +22,7 @@ import pl.sbandurski.simpleradio.view.adapter.SliderAdapter
 import pl.sbandurski.simpleradio.view.adapter.TrackListAdapter
 import pl.sbandurski.simpleradio.view.listener.TrackClickedListener
 import pl.sbandurski.simpleradio.view.util.vibrate
+import pl.sbandurski.simpleradio.view.view.activity.HistoryActivity
 import pl.sbandurski.simpleradio.view.view.activity.MainActivity
 
 class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
@@ -46,45 +46,49 @@ class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
         stop.setOnClickListener(this)
         history.setOnClickListener(this)
 
-        act.viewModel.mNativeConstraintSet.clone(fragment_radio_root)
-
-        prepareTracks()
-
         setSlider()
 
-        act.viewModel.mLightVibrant.observe(this, Observer { color ->
-            station_name.setTextColor(color ?: 0xFFFFFF)
-            track_artist.setTextColor(color ?: 0xFFFFFF)
-            track_title.setTextColor(color ?: 0xFFFFFF)
+        act.viewModel.mGradientPalette.observe(this, Observer { palette ->
+            val color = palette?.let {
+                when {
+                    it.lightVibrantSwatch != null -> it.lightVibrantSwatch
+                    it.lightMuted != null -> it.lightMuted
+                    it.vibrantSwatch != null -> it.vibrantSwatch
+                    it.dominantSwatch != null -> it.dominantSwatch
+                    else -> 0xfafafa
+                }
+            } ?: 0xfafafa
+            fragment_radio_bottom_bar.setBackgroundColor(color)
+            track_artist.setTextColor(color)
+            track_title.setTextColor(color)
             play_pause.clearColorFilter()
-            if (color != null) play_pause.setColorFilter(color)
+            play_pause.setColorFilter(color)
             history.clearColorFilter()
-            if (color != null) history.setColorFilter(color)
+            history.setColorFilter(color)
             stop.clearColorFilter()
-            if (color != null) stop.setColorFilter(color)
-            if (color != null) {
-                val states = arrayOf(
-                    intArrayOf(android.R.attr.state_enabled), // enabled
-                    intArrayOf(-android.R.attr.state_enabled), // disabled
-                    intArrayOf(-android.R.attr.state_checked), // unchecked
-                    intArrayOf(android.R.attr.state_pressed)  // pressed
-                )
-                val colors = intArrayOf(color, color, color, color)
-                act.navigation_view.itemIconTintList = ColorStateList(states, colors)
-                act.navigation_view.itemTextColor = ColorStateList(states, colors)
-            }
-//            act.navigation_view.menu.findItem(R.id.radio_item).setIconTintList()
+            stop.setColorFilter(color)
+            val states = arrayOf(
+                intArrayOf(android.R.attr.state_enabled), // enabled
+                intArrayOf(-android.R.attr.state_enabled), // disabled
+                intArrayOf(-android.R.attr.state_checked), // unchecked
+                intArrayOf(android.R.attr.state_pressed)  // pressed
+            )
+            val colors = intArrayOf(color, color, color, color)
+            act.navigation_view.itemIconTintList = ColorStateList(states, colors)
+            act.navigation_view.itemTextColor = ColorStateList(states, colors)
+            //            act.navigation_view.menu.findItem(R.id.radio_item).setIconTintList()
         })
 
         // Update current track data
         act.viewModel.mCurrentTrackData.observe(this, Observer { track ->
             track_artist.text = track!!.artist
             track_title.text = track.title
+            Log.d("TRACK_DATA", "Artist: ${track_artist.text}")
+            Log.d("TRACK_DATA", "Title: ${track_title.text}")
         })
 
         // Update current station data
         act.viewModel.mCurrentStation.observe(this, Observer { station ->
-            station_name.text = station?.getName()
             station_logo_civ_radio.setImageBitmap(station?.getImage())
         })
 
@@ -114,15 +118,6 @@ class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
         startActivity(intent)
     }
 
-    /**
-     * Prepare RecyclerView with tracks.
-     * */
-    private fun prepareTracks() {
-        track_list.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        act.mAdapter = TrackListAdapter(tracks = act.viewModel.mTracks.value!!, listener = this)
-        track_list.adapter = act.mAdapter
-    }
-
     private fun playPauseRadio() {
         vibrate(act, 20)
         if (act.viewModel.mService != null) {
@@ -140,10 +135,10 @@ class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
 
     private fun stopRadio() {
         vibrate(context!!, 20)
+        act.viewModel.setDefaultGradientPalette()
         if (act.viewModel.mService != null) {
             act.viewModel.hideLoadingAnimation(spinningLoadingScreen)
             station_logo_civ_radio.setImageResource(R.drawable.web_hi_res_512)
-            station_name.text = ""
             track_title.text = ""
             track_artist.text = ""
             if (act.viewModel.mService!!.mPlayer.playWhenReady) {
@@ -165,18 +160,12 @@ class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
                 .show()
             return
         }
-        TransitionManager.beginDelayedTransition(fragment_radio_root)
-        when (act.viewModel.mIsHistoryShowed) {
-            true -> act.viewModel.mNativeConstraintSet.applyTo(fragment_radio_root)
-
-            else -> {
-                val newConstraints = ConstraintSet()
-                newConstraints.clone(act.viewModel.mNativeConstraintSet)
-                newConstraints.connect(list_card.id, ConstraintSet.TOP, history.id, ConstraintSet.BOTTOM)
-                newConstraints.applyTo(fragment_radio_root)
-            }
-        }
-        act.viewModel.mIsHistoryShowed = !act.viewModel.mIsHistoryShowed
+        val showHistory = Intent(act, HistoryActivity::class.java)
+        val tracks = act.viewModel.mTracks.value
+        val color = act.viewModel.mGradientPalette.value
+        showHistory.putExtra("tracks", tracks)
+        showHistory.putExtra("color", color)
+        startActivity(showHistory)
     }
 
     private fun setSlider() {

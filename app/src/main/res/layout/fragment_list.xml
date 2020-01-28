@@ -8,12 +8,43 @@
     android:animateLayoutChanges="true"
     android:background="@android:color/transparent">
 
+    <View
+        android:id="@+id/fragment_list_left_margin"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintWidth_percent=".05"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <View
+        android:id="@+id/fragment_list_right_margin"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintWidth_percent="0.05"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <View
+        android:id="@+id/fragment_list_top_margin"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent=".025"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <View
+        android:id="@+id/fragment_list_bottom_margin"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent=".025"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        app:layout_constrainedWidth="true"
+        app:layout_constraintTop_toBottomOf="@id/fragment_list_top_margin"
+        app:layout_constraintBottom_toTopOf="@id/fragment_list_bottom_margin"
+        app:layout_constraintStart_toEndOf="@id/fragment_list_left_margin"
+        app:layout_constraintEnd_toStartOf="@id/fragment_list_right_margin"/>
 
     <ImageView
         android:id="@+id/filter_card_image"
@@ -32,36 +63,10 @@
         android:id="@+id/filter_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginBottom="50dp"
+        android:backgroundTint="@color/colorPrimary"
         android:src="@drawable/ic_search_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/nothing_found"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:orientation="vertical"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_sentiment_dissatisfied_24dp"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="We didn't found any station..."
-            android:textColor="@color/colorSecondaryAccent" />
-    </LinearLayout>
+        app:layout_constraintEnd_toStartOf="@id/fragment_list_right_margin"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

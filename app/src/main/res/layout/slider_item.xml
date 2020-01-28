@@ -8,21 +8,82 @@
     <ImageView
         android:id="@+id/slider_item_content"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintHeight_percent=".7"
+        android:layout_height="match_parent"
         app:layout_constraintDimensionRatio="1,1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
     <TextView
+        android:id="@+id/slider_item_name_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/SliderItemText"
+        app:layout_constraintStart_toEndOf="@id/slider_item_content"
+        app:layout_constraintTop_toTopOf="@id/slider_item_content"
+        app:layout_constraintBottom_toTopOf="@id/slider_item_country_description"/>
+
+    <TextView
+        android:id="@+id/slider_item_country_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/SliderItemText"
+        app:layout_constraintStart_toEndOf="@id/slider_item_content"
+        app:layout_constraintTop_toBottomOf="@id/slider_item_name_description"
+        app:layout_constraintBottom_toTopOf="@id/slider_item_genre_description"/>
+
+    <TextView
+        android:id="@+id/slider_item_genre_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/SliderItemText"
+        app:layout_constraintStart_toEndOf="@id/slider_item_content"
+        app:layout_constraintTop_toBottomOf="@id/slider_item_country_description"
+        app:layout_constraintBottom_toTopOf="@id/slider_item_bitrate_description"/>
+
+    <TextView
+        android:id="@+id/slider_item_bitrate_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/SliderItemText"
+        app:layout_constraintStart_toEndOf="@id/slider_item_content"
+        app:layout_constraintTop_toBottomOf="@id/slider_item_genre_description"
+        app:layout_constraintBottom_toBottomOf="@id/slider_item_content"/>
+
+    <TextView
         android:id="@+id/slider_item_name"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintStart_toStartOf="@id/slider_item_content"
-        app:layout_constraintEnd_toEndOf="@id/slider_item_content"
-        app:layout_constraintTop_toBottomOf="@id/slider_item_content"/>
+        android:layout_height="wrap_content"
+        style="@style/SliderItemText"
+        app:layout_constraintStart_toEndOf="@id/slider_item_name_description"
+        app:layout_constraintTop_toTopOf="@id/slider_item_name_description"
+        app:layout_constraintBottom_toBottomOf="@id/slider_item_name_description"/>
+
+    <TextView
+        android:id="@+id/slider_item_country"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/SliderItemText"
+        app:layout_constraintStart_toEndOf="@id/slider_item_country_description"
+        app:layout_constraintTop_toTopOf="@id/slider_item_country_description"
+        app:layout_constraintBottom_toBottomOf="@id/slider_item_country_description"/>
+
+    <TextView
+        android:id="@+id/slider_item_genre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/SliderItemText"
+        app:layout_constraintStart_toEndOf="@id/slider_item_genre_description"
+        app:layout_constraintTop_toTopOf="@id/slider_item_genre_description"
+        app:layout_constraintBottom_toBottomOf="@id/slider_item_genre_description"/>
+
+    <TextView
+        android:id="@+id/slider_item_bitrate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/SliderItemText"
+        app:layout_constraintStart_toEndOf="@id/slider_item_bitrate_description"
+        app:layout_constraintTop_toTopOf="@id/slider_item_bitrate_description"
+        app:layout_constraintBottom_toBottomOf="@id/slider_item_bitrate_description"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

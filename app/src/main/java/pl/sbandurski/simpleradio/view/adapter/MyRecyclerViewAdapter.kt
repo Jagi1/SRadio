@@ -27,7 +27,6 @@ class MyRecyclerViewAdapter(
         p0.setViews(
             station = list[p1]
         )
-        p0.setColor(color)
         p0.bind(list[p1], listener)
     }
 }

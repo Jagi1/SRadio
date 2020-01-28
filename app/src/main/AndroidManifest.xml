@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pl.sbandurski.simpleradio">
-    <!-- Internet stuff -->
+    <!-- Playing music with service -->
     <application
         android:name=".view.application.App"
         android:allowBackup="true"
@@ -11,24 +11,23 @@
         android:roundIcon="@drawable/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.view.activity.FilterActivity"></activity>
+        <activity android:name=".view.view.activity.PrepareActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".view.view.activity.HistoryActivity" />
+        <activity android:name=".view.view.activity.FilterActivity" />
         <activity
             android:name=".view.view.activity.IntroActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.view.activity.MainActivity"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
-        <activity
-            android:name=".view.view.activity.SearchActivity"
-            android:screenOrientation="portrait" />
 
         <receiver
             android:name=".view.service.RadioService$NotificationStopHandler"
@@ -40,11 +39,11 @@
         </receiver>
 
         <service android:name=".view.service.RadioService" />
-    </application>
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- Playing music with service -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- Vibration -->
+    </application> <!-- Vibration -->
     <uses-permission android:name="android.permission.VIBRATE" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
 </manifest>

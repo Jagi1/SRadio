@@ -6,25 +6,23 @@ import android.os.*
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_list.*
 import kotlinx.android.synthetic.main.fragment_radio.*
 import pl.sbandurski.simpleradio.R
 import pl.sbandurski.simpleradio.view.adapter.TrackListAdapter
 import pl.sbandurski.simpleradio.view.adapter.ViewPagerAdapter
 import pl.sbandurski.simpleradio.view.listener.ILoadingStationAnimationListener
 import pl.sbandurski.simpleradio.view.listener.TrackChangeListener
-import pl.sbandurski.simpleradio.view.listener.TrackClickedListener
 import pl.sbandurski.simpleradio.view.model.SearchFilter
 import pl.sbandurski.simpleradio.view.view.fragment.ListFragment
 import pl.sbandurski.simpleradio.view.view.fragment.RadioFragment
 import pl.sbandurski.simpleradio.view.view.fragment.SettingsFragment
 import pl.sbandurski.simpleradio.view.model.Station
+import pl.sbandurski.simpleradio.view.model.StationsCache
 import pl.sbandurski.simpleradio.view.model.Track
 import pl.sbandurski.simpleradio.view.service.RadioService
 import pl.sbandurski.simpleradio.view.util.*
@@ -37,7 +35,6 @@ class MainActivity :
     ViewPager.OnPageChangeListener,
     OnItemClickListener,
     TrackChangeListener,
-    TrackClickedListener,
     ILoadingStationAnimationListener{
 
     lateinit var viewModel: MainViewModel
@@ -62,7 +59,10 @@ class MainActivity :
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
-        viewModel.fetchAllStations(SearchFilter("", "", ""))
+        StationsCache.stations?.let {
+            viewModel.setAllStations(it)
+            StationsCache.stations = null
+        }
 
         viewModel.getGradientDrawable().observe(this, androidx.lifecycle.Observer { gradient ->
             main_layout.apply {
@@ -132,6 +132,7 @@ class MainActivity :
             it.putExtra("NAME", station.getName())
             it.putExtra("URL", station.getUrl())
             it.putExtra("DRAWABLE_ID", station.getDrawableID())
+            it.putExtra("PALETTE", viewModel.mGradientPalette.value)
         }
 //        title_tv.text = station.getName()
         when (viewModel.mBound) {
@@ -149,18 +150,6 @@ class MainActivity :
                 Context.BIND_AUTO_CREATE
             )
         }
-    }
-
-    /**
-     * Open youtube app and search for track.
-     * @param trackName Name of track to search.
-     * */
-    override fun onTrackClicked(trackName: String) {
-        val intent = Intent(Intent.ACTION_SEARCH)
-        intent.setPackage("com.google.android.youtube")
-        intent.putExtra("query", trackName)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(intent)
     }
 
     override fun onTrackChange(track: ParsingHeaderData.TrackData) {
@@ -203,11 +192,15 @@ class MainActivity :
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
+        Log.d("PAGE_SELECT", "1: ${p0.itemId}")
         pager.currentItem = when (p0.itemId) {
             R.id.radio_item -> 0
             R.id.list_item -> 1
             R.id.settings_item -> 2
             else -> 0
+        }
+        if (p0.itemId == 1) {
+            viewModel.showStationsIfFirstOpen()
         }
         return false
     }
@@ -219,6 +212,9 @@ class MainActivity :
             navigation_view.menu.getItem(0).isChecked = false
         navigation_view.menu.getItem(p0).isChecked = true
         prevMenuItem = navigation_view.menu.getItem(p0)
+        if (p0 == 1) {
+            viewModel.showStationsIfFirstOpen()
+        }
     }
 
     override fun onPageScrollStateChanged(p0: Int) {

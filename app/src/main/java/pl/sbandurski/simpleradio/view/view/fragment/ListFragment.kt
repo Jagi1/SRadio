@@ -2,9 +2,9 @@ package pl.sbandurski.simpleradio.view.view.fragment
 
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,9 +21,9 @@ import kotlinx.android.synthetic.main.fragment_list.*
 import pl.sbandurski.simpleradio.R
 import pl.sbandurski.simpleradio.view.view.activity.MainActivity
 import pl.sbandurski.simpleradio.view.adapter.MyRecyclerViewAdapter
+import pl.sbandurski.simpleradio.view.model.GradientPalette
 import pl.sbandurski.simpleradio.view.model.SearchFilter
 import pl.sbandurski.simpleradio.view.util.Codes
-import pl.sbandurski.simpleradio.view.util.hideSoftKeyboard
 import pl.sbandurski.simpleradio.view.view.activity.FilterActivity
 
 class ListFragment : Fragment(), View.OnClickListener {
@@ -56,8 +56,8 @@ class ListFragment : Fragment(), View.OnClickListener {
             }
         })
         act = activity as MainActivity
-        act.viewModel.mLightVibrant.observe(this, Observer {
-            it?.let { nonNullColor ->
+        act.viewModel.mGradientPalette.observe(this, Observer {
+            it.lightVibrantSwatch?.let { nonNullColor ->
                 val states = arrayOf(
                     intArrayOf(android.R.attr.state_enabled), // enabled
                     intArrayOf(-android.R.attr.state_enabled), // disabled
@@ -74,7 +74,7 @@ class ListFragment : Fragment(), View.OnClickListener {
 //        act.viewModel.fetchStations(this)
         act.viewModel.mStations.observe(this, Observer { stations ->
             recycler_view.scheduleLayoutAnimation()
-            mAdapter = MyRecyclerViewAdapter(stations!!, act, act.viewModel.mLightVibrant.value)
+            mAdapter = MyRecyclerViewAdapter(stations!!, act, act.viewModel.mGradientPalette.value?.lightVibrantSwatch)
             recycler_view.adapter = mAdapter
             if (stations.isEmpty()) {
                 Snackbar.make(act.navigation_view, "No stations found..", Snackbar.LENGTH_LONG)
@@ -85,7 +85,14 @@ class ListFragment : Fragment(), View.OnClickListener {
                 stations.forEach { station ->
                     storage.reference.child("/stations/${station.getLogoUrl()}/${station.getLogoUrl()}.bmp")
                         .getBytes(1024 * 1024).addOnSuccessListener { bytes ->
-                            station.setImage(BitmapFactory.decodeByteArray(bytes, 0, bytes.size))
+                            val metrics = act.resources.displayMetrics
+                            // Percent width
+                            val width = (metrics.widthPixels * 0.9).toInt()
+                            // Percent height
+                            val height = (metrics.heightPixels * 0.52).toInt()
+                            val image = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                            val resizedImage = Bitmap.createScaledBitmap(image, width, width, true)
+                            station.setImage(resizedImage)
                             mAdapter.notifyDataSetChanged()
                         }
                 }
@@ -114,7 +121,7 @@ class ListFragment : Fragment(), View.OnClickListener {
                 val filterStations = Intent(context, FilterActivity::class.java)
                 filterStations.putExtra("countries", act.viewModel.mCountries)
                 filterStations.putExtra("genres", act.viewModel.mGenres)
-                filterStations.putExtra("color", act.viewModel.mLightVibrant.value)
+                filterStations.putExtra("color", act.viewModel.mGradientPalette.value ?: GradientPalette())
                 startActivityForResult(filterStations, FILTER_REQUEST_CODE)
             }
         }

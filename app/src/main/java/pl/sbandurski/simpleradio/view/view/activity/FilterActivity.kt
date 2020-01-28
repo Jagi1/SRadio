@@ -5,18 +5,17 @@ import android.content.res.ColorStateList
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ArrayAdapter
-import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_filter.*
 import pl.sbandurski.simpleradio.R
+import pl.sbandurski.simpleradio.view.model.GradientPalette
 import pl.sbandurski.simpleradio.view.model.SearchFilter
 import pl.sbandurski.simpleradio.view.util.Codes
-import pl.sbandurski.simpleradio.view.viewmodel.MainViewModel
 
 class FilterActivity : AppCompatActivity() {
 
     var mCountries : Array<String>? = null
     var mGenres : Array<String>? = null
-    var mLightVibrant : Int = 0
+    lateinit var mGradientPalette : GradientPalette
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,17 +24,17 @@ class FilterActivity : AppCompatActivity() {
         val extras = intent
         mCountries = extras.getStringArrayExtra("countries")
         mGenres = extras.getStringArrayExtra("genres")
-        mLightVibrant = extras.getIntExtra("color", 0)
+        mGradientPalette = extras.getParcelableExtra("color")
 
-        if (mLightVibrant != 0) {
+        mGradientPalette.lightVibrantSwatch?.let {
             val states = arrayOf(
                 intArrayOf(android.R.attr.state_enabled), // enabled
                 intArrayOf(-android.R.attr.state_enabled), // disabled
                 intArrayOf(-android.R.attr.state_checked), // unchecked
                 intArrayOf(android.R.attr.state_pressed)  // pressed
             )
-            val colors = intArrayOf(mLightVibrant, mLightVibrant, mLightVibrant, mLightVibrant)
-            filter_button.setBackgroundColor(mLightVibrant)
+            val colors = intArrayOf(it, it, it, it)
+            filter_button.setBackgroundColor(it)
             search_name_container.hintTextColor = ColorStateList(states, colors)
             search_country_container.hintTextColor = ColorStateList(states, colors)
             search_genere_container.hintTextColor = ColorStateList(states, colors)
