@@ -1,6 +1,8 @@
 package pl.sbandurski.simpleradio.view.viewmodel
 
+import android.app.Activity
 import android.content.ComponentName
+import android.content.Context
 import android.content.ServiceConnection
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -11,12 +13,23 @@ import android.os.IBinder
 import android.view.View
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.palette.graphics.Palette
+import com.github.amlcurran.showcaseview.ShowcaseView
+import com.github.amlcurran.showcaseview.targets.ActionViewTarget
+import com.github.amlcurran.showcaseview.targets.ViewTarget
 import com.github.ybq.android.spinkit.SpinKitView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
+import com.joanfuentes.hintcase.ContentHolder
+import com.joanfuentes.hintcase.HintCase
+import com.joanfuentes.hintcase.RectangularShape
+import com.joanfuentes.hintcaseassets.hintcontentholders.SimpleHintContentHolder
+import com.joanfuentes.hintcaseassets.shapeanimators.RevealRectangularShapeAnimator
+import com.joanfuentes.hintcaseassets.shapeanimators.UnrevealRectangularShapeAnimator
+import kotlinx.android.synthetic.main.fragment_radio.*
 import pl.sbandurski.simpleradio.R
 import pl.sbandurski.simpleradio.view.listener.ILoadingStationAnimationListener
 import pl.sbandurski.simpleradio.view.listener.TrackChangeListener
@@ -26,6 +39,8 @@ import pl.sbandurski.simpleradio.view.model.Station
 import pl.sbandurski.simpleradio.view.model.Track
 import pl.sbandurski.simpleradio.view.service.RadioService
 import pl.sbandurski.simpleradio.view.util.ParsingHeaderData
+import pl.sbandurski.simpleradio.view.view.fragment.RadioFragment
+import pl.sbandurski.simpleradio.view.view.fragment.SettingsFragment
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.schedule
@@ -253,4 +268,22 @@ class MainViewModel : ViewModel() {
     private fun getDrawable(name: String): Int = getId(name, "drawable")
 
     private fun getId(name: String, type: String) = resources!!.getIdentifier(name, type, PACKAGE)
+
+    fun showTutorial(root : View, targetView: View, title : String, content : String) {
+        val textBlock = SimpleHintContentHolder.Builder(root.context).apply {
+            setContentTitle(title)
+            setContentText(content)
+        }.build()
+        val textExtraBlock = SimpleHintContentHolder.Builder(root.context).apply {
+            setContentText("Click anywhere to continue")
+        }.build()
+        HintCase(root).apply {
+            setTarget(targetView, RectangularShape(), HintCase.TARGET_IS_CLICKABLE)
+            setShapeAnimators(RevealRectangularShapeAnimator(), UnrevealRectangularShapeAnimator())
+            setBackgroundColorByResourceId(R.color.colorPrimaryDark)
+            setHintBlock(textBlock)
+            setExtraBlock(textExtraBlock)
+            show()
+        }
+    }
 }

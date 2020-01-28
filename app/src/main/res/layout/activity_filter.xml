@@ -7,6 +7,7 @@
     android:background="@color/colorBackground"
     android:fitsSystemWindows="true"
     android:paddingStart="8dp"
+    android:id="@+id/filter_root"
     android:paddingEnd="8dp"
     tools:context=".view.view.activity.FilterActivity">
 

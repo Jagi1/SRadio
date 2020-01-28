@@ -8,19 +8,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.TransitionManager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_radio.*
 import pl.sbandurski.simpleradio.R
 import pl.sbandurski.simpleradio.view.adapter.SliderAdapter
-import pl.sbandurski.simpleradio.view.adapter.TrackListAdapter
 import pl.sbandurski.simpleradio.view.listener.TrackClickedListener
 import pl.sbandurski.simpleradio.view.util.vibrate
 import pl.sbandurski.simpleradio.view.view.activity.HistoryActivity
@@ -102,6 +96,42 @@ class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
             if (act.viewModel.mService!!.mPlayer.playWhenReady) play_pause.setImageDrawable(act.getDrawable(R.drawable.ic_pause_24dp))
             else play_pause.setImageDrawable(act.getDrawable(R.drawable.ic_play_arrow_24dp))
         }
+
+
+        play_pause.setOnLongClickListener {
+            val title = "Play / Pause button"
+            val content = "Use this button to play or pause radio station."
+            act.viewModel.showTutorial(act.window.decorView, it, title, content)
+            true
+        }
+
+        history.setOnLongClickListener {
+            val title = "History button"
+            val content = "Use this button to show history of songs played."
+            act.viewModel.showTutorial(act.window.decorView, it, title, content)
+            true
+        }
+
+        stop.setOnLongClickListener {
+            val title = "Stop button"
+            val content = "Use this button to stop current radio station."
+            act.viewModel.showTutorial(act.window.decorView, it, title, content)
+            true
+        }
+
+        station_logo_civ_radio.setOnLongClickListener {
+            val title = "Radio logo"
+            val content = "Here current station logo will be displayed (if it is available)."
+            act.viewModel.showTutorial(act.window.decorView, it, title, content)
+            true
+        }
+
+        fragment_radio_slider_container.setOnLongClickListener {
+            val title = "Featured radio stations"
+            val content = "New stations is shown here."
+            act.viewModel.showTutorial(act.window.decorView, it, title, content)
+            true
+        }
     }
 
     override fun onClick(v: View?) {
@@ -162,7 +192,7 @@ class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
     private fun showHistory() {
         if (act.viewModel.mTracks.value?.size == 0) {
             Snackbar.make(act.navigation_view, "Track history is empty", Snackbar.LENGTH_SHORT)
-                .setBackgroundTint(act.resources.getColor(R.color.colorLightBlue))
+                .setBackgroundTint(act.resources.getColor(R.color.colorWhite))
                 .show()
             return
         }

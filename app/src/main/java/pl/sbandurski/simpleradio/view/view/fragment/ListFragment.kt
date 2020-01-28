@@ -52,7 +52,7 @@ class ListFragment : Fragment(), View.OnClickListener {
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                act.viewModel.changeFilterAlpha(filter_card_image, filter_fab, newState)
+//                act.viewModel.changeFilterAlpha(filter_card_image, filter_fab, newState)
             }
         })
         act = activity as MainActivity
@@ -71,14 +71,13 @@ class ListFragment : Fragment(), View.OnClickListener {
         filter_fab.setOnClickListener(this)
         recycler_view.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         act.viewModel.resources = resources
-//        act.viewModel.fetchStations(this)
         act.viewModel.mStations.observe(this, Observer { stations ->
             recycler_view.scheduleLayoutAnimation()
             mAdapter = MyRecyclerViewAdapter(stations!!, act, act.viewModel.mGradientPalette.value?.lightVibrantSwatch)
             recycler_view.adapter = mAdapter
             if (stations.isEmpty()) {
                 Snackbar.make(act.navigation_view, "No stations found..", Snackbar.LENGTH_LONG)
-                    .setBackgroundTint(resources.getColor(R.color.colorLightBlue))
+                    .setBackgroundTint(resources.getColor(R.color.colorWhite))
                     .show()
             } else {
                 val storage = FirebaseStorage.getInstance()
@@ -92,6 +91,13 @@ class ListFragment : Fragment(), View.OnClickListener {
                 }
             }
         })
+
+        filter_fab.setOnLongClickListener {
+            val title = "Filter button"
+            val content = "Use this button to filter stations by specific attributes."
+            act.viewModel.showTutorial(act.window.decorView, it, title, content)
+            true
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

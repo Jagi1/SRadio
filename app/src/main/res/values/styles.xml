@@ -44,4 +44,9 @@
         <item name="android:layout_marginStart">12dp</item>
     </style>
 
+    <style name="ShowCaseDefault" parent="ShowcaseView">
+        <item name="sv_backgroundColor">@color/colorBackground</item>
+        <item name="sv_buttonText">Hide</item>
+    </style>
+
 </resources>

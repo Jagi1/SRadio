@@ -41,7 +41,6 @@ class MainActivity :
     private var prevMenuItem: MenuItem? = null
     private var updateUIHandler: Handler? = null
     var mAdapter: TrackListAdapter? = null
-    private lateinit var prefs: SharedPreferences
     private val MESSAGE_UPDATE_TRACKS = 1
     private lateinit var mReceiver: HeadsetReceiver
     private val PACKAGE = "pl.qwisdom.simpleradio"
@@ -49,13 +48,6 @@ class MainActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        prefs = getSharedPreferences("SimpleRadioPrefs", Context.MODE_PRIVATE)
-
-        if (prefs.getBoolean("firstrun", true)) {
-            val intro = Intent(this, IntroActivity::class.java)
-            startActivity(intro)
-        }
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
@@ -267,9 +259,6 @@ class MainActivity :
 
     override fun onResume() {
         super.onResume()
-        if (prefs.getBoolean("firstrun", true)) {
-            prefs.edit().putBoolean("firstrun", false).apply()
-        }
     }
 
     override fun onPause() {

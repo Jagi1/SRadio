@@ -23,6 +23,7 @@ class PrepareActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_prepare)
         fetchAllStations()
+//        startMainActivity()
     }
 
     private fun fetchAllStations() {

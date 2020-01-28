@@ -59,14 +59,14 @@
         app:layout_constraintStart_toStartOf="@id/filter_fab"
         app:layout_constraintTop_toTopOf="@id/filter_fab" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/filter_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:src="@drawable/ic_search_24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/fragment_list_right_margin"/>
+        android:drawableLeft="@drawable/ic_filter_list"
+        android:elevation="32dp"
+        android:text="Filter"
+        app:layout_constraintStart_toEndOf="@id/fragment_list_left_margin"
+        app:layout_constraintBottom_toTopOf="@id/fragment_list_bottom_margin"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
