@@ -3,6 +3,7 @@ package pl.sbandurski.simpleradio.view.view.fragment
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -25,6 +26,7 @@ class SettingsFragment: PreferenceFragmentCompat() {
     private lateinit var builder: AlertDialog.Builder
     private lateinit var time: SwitchPreference
     private lateinit var feedback: Preference
+    private lateinit var rate : Preference
     private lateinit var dialogView: View
     private lateinit var database: FirebaseFirestore
 
@@ -47,9 +49,11 @@ class SettingsFragment: PreferenceFragmentCompat() {
 
     private fun initPreferences() {
         feedback = findPreference("feedback")
+        rate = findPreference("rate")
         time = findPreference("time") as SwitchPreference
         prepareTime()
         prepareFeedback()
+        prepareRate()
     }
 
     private fun prepareTime() {
@@ -64,6 +68,21 @@ class SettingsFragment: PreferenceFragmentCompat() {
         }
     }
 
+    private fun prepareRate() {
+        rate.setOnPreferenceClickListener {
+            val uri = Uri.parse("market://details?id=" + context?.packageName)
+            val goToMarket = Intent(Intent.ACTION_VIEW, uri)
+            goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+            try {
+                startActivity(goToMarket)
+            } catch (e : ActivityNotFoundException) {
+                startActivity(Intent(Intent.ACTION_VIEW,
+                    Uri.parse("http://play.google.com/store/apps/details?id=" + context?.packageName)))
+            }
+            true
+        }
+    }
+
     private fun prepareFeedback() {
         feedback.setOnPreferenceClickListener {
             val sendEmail = Intent(Intent.ACTION_SEND)
@@ -71,6 +90,7 @@ class SettingsFragment: PreferenceFragmentCompat() {
                 type = "message/rfc822"
                 putExtra(Intent.EXTRA_EMAIL, arrayOf("bandurski.sebastian@gmail.com"))
                 putExtra(Intent.EXTRA_SUBJECT, "Simple Radio feedback")
+                flags = Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK
             }
             try {
                 startActivity(Intent.createChooser(sendEmail, "Send feedback..."))

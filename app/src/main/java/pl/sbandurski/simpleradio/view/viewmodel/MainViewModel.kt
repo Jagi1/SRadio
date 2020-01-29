@@ -3,6 +3,7 @@ package pl.sbandurski.simpleradio.view.viewmodel
 import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
+import android.content.DialogInterface
 import android.content.ServiceConnection
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -17,10 +18,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.palette.graphics.Palette
-import com.github.amlcurran.showcaseview.ShowcaseView
-import com.github.amlcurran.showcaseview.targets.ActionViewTarget
-import com.github.amlcurran.showcaseview.targets.ViewTarget
 import com.github.ybq.android.spinkit.SpinKitView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joanfuentes.hintcase.ContentHolder
@@ -285,5 +284,29 @@ class MainViewModel : ViewModel() {
             setExtraBlock(textExtraBlock)
             show()
         }
+    }
+
+    fun showFirstTutorial(context : Context, title : String, content : String) {
+        MaterialAlertDialogBuilder(context).apply {
+            setTitle(title)
+            setMessage(content)
+            setPositiveButton("Ok"
+            ) { dialog, which -> }
+            show()
+        }
+
+//        val textBlock = SimpleHintContentHolder.Builder(root.context).apply {
+//            setContentTitle(title)
+//            setContentText(content)
+//        }.build()
+//        val textExtraBlock = SimpleHintContentHolder.Builder(root.context).apply {
+//            setContentText("Click anywhere to continue")
+//        }.build()
+//        HintCase(root).apply {
+//            setBackgroundColorByResourceId(R.color.colorPrimaryDark)
+//            setHintBlock(textBlock)
+//            setExtraBlock(textExtraBlock)
+//            show()
+//        }
     }
 }

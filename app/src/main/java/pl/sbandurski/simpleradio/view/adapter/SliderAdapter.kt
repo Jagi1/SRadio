@@ -10,6 +10,7 @@ import pl.sbandurski.simpleradio.R
 import pl.sbandurski.simpleradio.view.model.Station
 import pl.sbandurski.simpleradio.view.view.activity.MainActivity
 import pl.sbandurski.simpleradio.view.view.fragment.RadioFragment
+import java.lang.IllegalStateException
 
 class SliderAdapter(val context : RadioFragment, val stations : ArrayList<Station>) : CardSliderAdapter<Station>(stations) {
 
@@ -31,17 +32,21 @@ class SliderAdapter(val context : RadioFragment, val stations : ArrayList<Statio
     override fun getItemContentLayout(position: Int): Int = R.layout.slider_item
 
     fun initializeImages() {
-        val storage = FirebaseStorage.getInstance()
-        stations.forEach { station ->
-            storage.reference.child("/stations/${station.getLogoUrl()}/${station.getLogoUrl()}.bmp")
-                .getBytes(1024 * 1024)
-                .addOnSuccessListener { bytes ->
-                    val image = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                    station.setImage(image)
-                    if (stations.indexOf(station) >= 2) {
-                        context.fragment_radio_slider_vp.adapter = this
+        try {
+            val storage = FirebaseStorage.getInstance()
+            stations.forEach { station ->
+                storage.reference.child("/stations/${station.getLogoUrl()}/${station.getLogoUrl()}.bmp")
+                    .getBytes(1024 * 1024)
+                    .addOnSuccessListener { bytes ->
+                        val image = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                        station.setImage(image)
+                        if (stations.indexOf(station) >= 2) {
+                            context.fragment_radio_slider_vp.adapter = this
+                        }
                     }
-                }
+            }
+        } catch (e : IllegalStateException) {
+
         }
     }
 }

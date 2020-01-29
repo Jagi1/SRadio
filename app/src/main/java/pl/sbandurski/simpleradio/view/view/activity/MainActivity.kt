@@ -257,10 +257,6 @@ class MainActivity :
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     override fun onPause() {
         super.onPause()
         viewModel.mRotating = this.isRecreating()

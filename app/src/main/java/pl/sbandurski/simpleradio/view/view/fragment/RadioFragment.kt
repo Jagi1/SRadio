@@ -1,5 +1,6 @@
 package pl.sbandurski.simpleradio.view.view.fragment
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
@@ -131,6 +132,15 @@ class RadioFragment : Fragment(), View.OnClickListener, TrackClickedListener {
             val content = "New stations is shown here."
             act.viewModel.showTutorial(act.window.decorView, it, title, content)
             true
+        }
+
+        val prefs = act.getSharedPreferences("SimpleRadioPrefs", Context.MODE_PRIVATE)
+        if (prefs.getBoolean("firstrun", true)) {
+            prefs.edit().putBoolean("firstrun", false).apply()
+
+            val title = "Simple Radio"
+            val message = "Welcome to the Simple Radio App. If you are not aware of what specific element of interface does, just long-click it to get more info."
+            act.viewModel.showFirstTutorial(act, title, message)
         }
     }
 

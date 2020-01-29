@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreference
         android:icon="@drawable/ic_access_time_24dp"
@@ -11,5 +12,11 @@
         android:key="feedback"
         android:summary="Report technical issues and suggest new stations"
         android:title="Feedback" />
+
+    <Preference
+        android:icon="@drawable/ic_star"
+        android:key="rate"
+        app:summary="If you enjoy this app, feel free to rate it"
+        android:title="Rate app"/>
 
 </PreferenceScreen>
