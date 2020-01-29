@@ -43,6 +43,7 @@ class SettingsFragment: PreferenceFragmentCompat() {
             it.lightVibrantSwatch?.let { nonNullColor ->
                 time.icon.setTint(nonNullColor)
                 feedback.icon.setTint(nonNullColor)
+                rate.icon.setTint(nonNullColor)
             }
         })
     }
